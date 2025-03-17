@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black_color">#121212</color>
+    <color name="black_color_2d">#2d2d2d</color>
+    <color name="gray_color">#79747E</color>
+    <color name="gray_color_8e">#8E8E93</color>
+
+    <color name="logo_edna_color">#2B8718</color>
+
+    <color name="gray_color_b5">#b5b5b5</color>
+    <color name="gray_color_b7">#b7b7b7</color>
+    <color name="gray_color_f2">#f2f2f7</color>
+    <color name="gray_color_f4">#f4f4f4</color>
+    <color name="white_color_ec">#ececec</color>
+    <color name="white_color_fa">#fafafa</color>
+    <color name="white_color">#ffffff</color>
+
+    <color name="blue_color">#007AFF</color>
+    <color name="blue_color_lite">#0A84FF</color>
+    <color name="blue_color_dark">#004EA4</color>
+    <color name="toolbar_color">#1C1B1F</color>
+    <color name="red_color">#FF3B30</color>
+
+    <color name="info_text_color">#883C3C43</color>
+    <color name="alt_threads_outgoing_bubble_color">#505050</color>
+    <color name="alt_threads_chat_toolbar">#505050</color>
+    <color name="alt_threads_chat_context_menu">@color/white_color_ec</color>
+    <color name="alt_threads_chat_toolbar_text">@color/white_color_ec</color>
+    <color name="alt_threads_chat_status_bar">#000000</color>
+    <color name="alt_threads_chat_toolbar_menu_item_light">#505050</color>
+    <color name="alt_threads_chat_toolbar_menu_item_black">@color/white_color_ec</color>
+    <color name="alt_threads_chat_toolbar_hint">#A9A9A9</color>
+
+    <!-- Light theme colors -->
+    <color name="light_outgoing_bubble">#BBF1D1</color>
+    <color name="light_icons">#54DCA0</color>
+    <color name="light_highlighting">#DFF3E7</color>
+    <color name="light_main">#2E7B59</color>
+    <color name="light_toolbar">#2E7B59</color>
+    <color name="light_statusbar">#18382A</color>
+    <color name="light_time_text">#D0D2D4</color>
+    <color name="light_outgoing_image_time_background">#4D000000</color>
+    <color name="light_links">#0000FF</color>
+    <color name="usual_logs_light_text">#444444</color>
+
+    <!-- Dark theme colors -->
+    <color name="dark_outgoing_bubble">#183D2C</color>
+    <color name="dark_incoming_bubble">#383C41</color>
+    <color name="dark_icons">#2A6E50</color>
+    <color name="dark_highlighting">#628676</color>
+    <color name="dark_main">#1C1B1F</color>
+    <color name="dark_toolbar">#1C1B1F</color>
+    <color name="dark_statusbar">#000000</color>
+    <color name="dark_outgoing_time_text">#9fa5a9</color>
+    <color name="dark_outgoing_image_time_background">#4D000000</color>
+    <color name="dark_links">#00BCD4</color>
+    <color name="dark_chat_background">#505050</color>
+    <color name="dark_system_text">#f2f2f7</color>
+    <color name="dark_messages_text">#f2f2f7</color>
+    <color name="dark_time_text">#9fa5a9</color>
+    <color name="usual_logs_dark_text">#fdfdfd</color>
+
+    <color name="alt_threads_attachments_background">@color/ecc_blue_grey_607d8b</color>
+    <color name="alt_black">#000000</color>
+    <color name="alt_white">#ffffff</color>
+    <color name="alt_green">#83B144</color>
+    <color name="alt_blue">#3299de</color>
+    <color name="alt_blue_transparent">#303299de</color>
+
+    <color name="log_flush_color">#0000ff</color>
+    <color name="log_error_color">#ac030a</color>
+    <color name="log_warning_color">#fd7e0d</color>
+    <color name="log_info_color">#000000</color>
+    <color name="log_dark_flush_color">#00BCD4</color>
+</resources>

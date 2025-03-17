@@ -1,0 +1,38 @@
+{
+  "action": "getMessages",
+  "data": {
+    "messages": [
+      {
+        "messageId": "114f1fd2-70f3-4cf7-95a0-ab9212648e23",
+        "sentAt": "2024-11-28T08:16:16.498Z",
+        "notification": "New chat message received",
+        "content": {
+          "type": "SURVEY",
+          "uuid": "114f1fd2-70f3-4cf7-95a0-ab9212648e23",
+          "text": "{\"id\":1,\"uuid\":\"114f1fd2-70f3-4cf7-95a0-ab9212648e23\",\"sendingId\":1301,\"hideAfter\":900,\"blockInput\":true,\"questions\":[{\"id\":1,\"sendingId\":1301,\"text\":\"Оцените качество предоставленной консультации\",\"displayText\":\"Качество обслуживания\",\"surveyViewType\":\"SCALE\",\"scale\":5,\"simple\":false}]}",
+          "content": {
+            "id": 1,
+            "uuid": "114f1fd2-70f3-4cf7-95a0-ab9212648e23",
+            "sendingId": 1301,
+            "hideAfter": 900,
+            "blockInput": true,
+            "questions": [
+              {
+                "id": 1,
+                "sendingId": 1301,
+                "text": "Оцените насколько мы решили ваш вопрос",
+                "displayText": "Оцените насколько мы решили ваш вопрос",
+                "surveyViewType": "SCALE",
+                "scale": 5,
+                "simple": false
+              }
+            ]
+          }
+        },
+        "important": true,
+        "messageType": "NORMAL"
+      }
+    ]
+  },
+  "createdAt": 1732781776616
+}

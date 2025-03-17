@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@color/black_color"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/margin_8"
+            android:layout_marginEnd="@dimen/margin_8"
+            android:padding="@dimen/margin_12"
+            android:src="@drawable/ic_back" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/title"
+            style="@style/FragmentTitleTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:lines="1"
+            android:text="@string/user" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/okButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/margin_8"
+            android:layout_marginEnd="@dimen/margin_8"
+            android:padding="@dimen/margin_12"
+            android:src="@drawable/ic_ok_selector" />
+
+    </LinearLayout>
+
+    <edna.chatcenter.demo.appCode.views.InputField
+        android:id="@+id/userId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/common_app_margins"
+        android:layout_marginTop="@dimen/margin_16"
+        android:layout_marginEnd="@dimen/common_app_margins"
+        app:hint="@string/user_id_hint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+    <edna.chatcenter.demo.appCode.views.InputField
+        android:id="@+id/userData"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/common_app_margins"
+        android:layout_marginTop="@dimen/margin_16"
+        android:layout_marginEnd="@dimen/common_app_margins"
+        app:hint="@string/user_data"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userId" />
+
+    <edna.chatcenter.demo.appCode.views.InputField
+        android:id="@+id/signature"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/common_app_margins"
+        android:layout_marginTop="@dimen/margin_16"
+        android:layout_marginEnd="@dimen/common_app_margins"
+        app:hint="@string/signature"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userData" />
+
+    <edna.chatcenter.demo.appCode.views.InputField
+        android:id="@+id/authorizationHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/common_app_margins"
+        android:layout_marginTop="@dimen/margin_16"
+        android:layout_marginEnd="@dimen/common_app_margins"
+        app:hint="@string/authorization_header"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signature" />
+
+    <edna.chatcenter.demo.appCode.views.InputField
+        android:id="@+id/xAuthSchemaHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/common_app_margins"
+        android:layout_marginTop="@dimen/margin_16"
+        android:layout_marginEnd="@dimen/common_app_margins"
+        app:hint="@string/x_auth_schema_header"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/authorizationHeader" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
