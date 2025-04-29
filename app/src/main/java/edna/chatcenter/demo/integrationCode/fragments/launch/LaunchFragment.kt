@@ -78,6 +78,7 @@ class LaunchFragment : BaseAppFragment<FragmentLaunchBinding>(FragmentLaunchBind
         userButton.setOnClickListener { viewModel.click(userButton) }
         demonstrations.setOnClickListener { viewModel.click(demonstrations) }
         apiSelector.setOnClickListener { showSelectApiVersionMenu() }
+        settingsButton.setOnClickListener { viewModel.click(settingsButton) }
         login.setOnClickListener {
             viewModel.click(login)
             setUnreadCount(0)

@@ -57,6 +57,7 @@ import java.io.InputStream
 import java.io.InputStreamReader
 import java.util.concurrent.TimeUnit
 
+// Если решишь переименовать данный класс, нужно поменять привязку в методе isRunningUiTest()
 abstract class BaseTestCase(
     private val isUserInputEnabled: Boolean = true,
     private val timeoutInSeconds: Int = 2

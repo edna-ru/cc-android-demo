@@ -1,6 +1,7 @@
 package edna.chatcenter.demo.integrationCode
 
 import android.app.Application
+import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
@@ -26,6 +27,11 @@ import edna.chatcenter.demo.appCode.business.ServersProvider
 import edna.chatcenter.demo.appCode.business.appModule
 import edna.chatcenter.demo.appCode.business.jsonStringToMap
 import edna.chatcenter.demo.appCode.fragments.log.LogViewModel
+import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyKeepWebSocket
+import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyOpenGraph
+import edna.chatcenter.demo.appCode.fragments.settings.settingsKeySearch
+import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyVoiceMessages
+import edna.chatcenter.demo.appCode.fragments.settings.settingsPreferencesName
 import edna.chatcenter.demo.appCode.models.LogModel
 import edna.chatcenter.demo.appCode.models.ServerConfig
 import edna.chatcenter.demo.appCode.push.HCMTokenRefresher
@@ -176,8 +182,8 @@ class EdnaChatCenterApplication : Application() {
             navigationBarStyle = navigationBarStyle.copy(closeButtonEnabled = false)
         }
 
-        chatDarkTheme = ChatTheme(darkChatComponents)
-        chatLightTheme = ChatTheme(lightChatComponents)
+        chatDarkTheme = ChatTheme(darkChatComponents) // темная тема
+        chatLightTheme = ChatTheme(lightChatComponents) // светлая тема
 
         /*chatLightTheme = ChatTheme(
             lightChatComponents.apply {
@@ -243,12 +249,14 @@ class EdnaChatCenterApplication : Application() {
             SSLPinningConfig(certificates, server.allowUntrustedSSLCertificate)
         )
 
+        val settingsPreferences = getSharedPreferences(settingsPreferencesName, Context.MODE_PRIVATE)
         val chatConf = chatConfig ?: ChatConfig(
             transportConfig,
             networkConfig,
-            searchEnabled = true,
-            linkPreviewEnabled = true,
-            voiceRecordingEnabled = true,
+            searchEnabled = settingsPreferences.getBoolean(settingsKeySearch, true),
+            linkPreviewEnabled = settingsPreferences.getBoolean(settingsKeyOpenGraph, true),
+            voiceRecordingEnabled = settingsPreferences.getBoolean(settingsKeyVoiceMessages, true),
+            keepWebSocketActive = settingsPreferences.getBoolean(settingsKeyKeepWebSocket, false),
             autoScrollToLatest = true
         ).apply {
             userInputEnabled = server.isInputEnabled
@@ -262,6 +270,8 @@ class EdnaChatCenterApplication : Application() {
 
         chatCenterUI?.setChatCenterUIListener(object : ChatCenterUIListener {
             override fun unreadMessageCountChanged(count: UInt) {
+                Log.i("ELog", "New unread messages count: $count")
+
                 val intent = Intent(LaunchFragment.APP_UNREAD_COUNT_BROADCAST)
                 intent.putExtra(LaunchFragment.UNREAD_COUNT_KEY, count.toInt())
                 sendBroadcast(intent)

@@ -91,6 +91,7 @@ class LaunchViewModel(
             R.id.demonstrations -> navigationController.navigate(R.id.action_LaunchFragment_to_DemonstrationsListFragment)
             R.id.userButton -> navigationController.navigate(R.id.action_LaunchFragment_to_UserListFragment)
             R.id.login -> { login(navigationController) }
+            R.id.settingsButton -> navigationController.navigate(R.id.action_LaunchFragment_to_SettingsFragment)
         }
     }
 

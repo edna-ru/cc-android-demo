@@ -3,6 +3,7 @@
 
     <string name="login_to_account">Вход в аккаунт</string>
     <string name="server">Сервер</string>
+    <string name="settings">Настройки</string>
     <string name="user">Пользователь</string>
     <string name="api_version">Версия API</string>
     <string name="log_level">Уровень лога: </string>
@@ -26,6 +27,7 @@
     <string name="add_server_fragment_label">Add server screen</string>
     <string name="user_list_fragment_label">Select user screen</string>
     <string name="add_user_fragment_label">Add user screen</string>
+    <string name="settings_fragment_label">Settings screen</string>
 
     <string name="text_messages">Текстовые сообщения</string>
     <string name="connection_errors">Сообщения с ошибками</string>
@@ -83,4 +85,8 @@
     <string name="no_logs_text">Логов нет</string>
     <string name="to_previous_log">К предыдущему логу</string>
     <string name="to_next_log">К следущему логу</string>
+    <string name="sdk_settings">настройки sdk</string>
+    <string name="search">Поиск</string>
+    <string name="opengraph">Отображение OpenGraph</string>
+    <string name="keep_websocket">Оставлять WebSocket активным (тест счетчика)</string>
 </resources>

@@ -110,4 +110,9 @@
         <item name="android:windowBackground">@drawable/splash_background</item>
     </style>
 
+    <style name="SwitchStyle" parent="Widget.MaterialComponents.CompoundButton.Switch">
+        <item name="thumbTint">@color/black_color</item>
+        <item name="trackTint">@color/gray_color</item>
+    </style>
+
 </resources>

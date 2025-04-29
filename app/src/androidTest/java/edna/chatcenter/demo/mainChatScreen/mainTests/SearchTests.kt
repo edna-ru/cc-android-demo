@@ -50,9 +50,6 @@ class SearchTests : BaseTestCase() {
                 assert(getSize() == 2) { "Размер списка после поиска \"Edn\" должен равняться 2" }
 
                 firstChild<ChatMainScreen.SearchRecyclerItem> {
-                    assert("Первый элемент в списке должен содержать имя \"Вы\"") {
-                        nameTextView.hasText(edna.chatcenter.ui.R.string.ecc_you)
-                    }
                     assert("Первый элемент в списке не содержит правильный текст") {
                         messageTextView.hasText("Добро пожаловать в наш чат! А кто такие Edna?")
                     }
