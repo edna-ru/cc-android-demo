@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -102,6 +103,9 @@ class LaunchFragment : BaseAppFragment<FragmentLaunchBinding>(FragmentLaunchBind
         viewModel.enabledLoginButtonLiveData.observe(viewLifecycleOwner) {
             login.isEnabled = it
         }
+        viewModel.incorrectUserLiveData.observe(viewLifecycleOwner) {
+            if (it) showWrongUserDataError()
+        }
     }
 
     private fun initObservers() {
@@ -170,6 +174,14 @@ class LaunchFragment : BaseAppFragment<FragmentLaunchBinding>(FragmentLaunchBind
             unreadCountFilter,
             ContextCompat.RECEIVER_VISIBLE_TO_INSTANT_APPS
         )
+    }
+
+    private fun showWrongUserDataError() {
+        Toast.makeText(
+            context,
+            "Ошибка в поле \"Данные пользователя\". Проверьте соответствие формату Json",
+            Toast.LENGTH_LONG
+        ).show()
     }
 
     class InitUnreadCountReceiver(val fragment: LaunchFragment) : BroadcastReceiver() {

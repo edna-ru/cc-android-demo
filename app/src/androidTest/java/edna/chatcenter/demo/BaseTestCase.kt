@@ -10,6 +10,7 @@ import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
+import androidx.test.uiautomator.UiDevice
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import edna.chatcenter.core.ChatAuthType
 import edna.chatcenter.core.config.ChatAuth
@@ -249,6 +250,12 @@ abstract class BaseTestCase(
                         .setBody(configAnswer ?: TestMessages.defaultConfigMock)
                         .setBodyDelay(withAnswerDelayInMs, TimeUnit.MILLISECONDS)
                         .addHeader("Content-Type", "application/json")
+                } else if (path.contains("edna.ru")) {
+                    MockResponse()
+                        .setResponseCode(200)
+                        .setBody(TestMessages.ednaOpenGraphMock)
+                        .setBodyDelay(withAnswerDelayInMs, TimeUnit.MILLISECONDS)
+                        .addHeader("Content-Type", "text/html; charset=UTF-8")
                 } else {
                     MockResponse().setResponseCode(404)
                 }
@@ -362,6 +369,11 @@ abstract class BaseTestCase(
                 click()
             }
         }
+    }
+
+    protected fun clearLogcat() {
+        val uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        uiDevice.executeShellCommand("logcat -c")
     }
 
     private fun sendCustomMessageFromUser_Espresso(message: String) {

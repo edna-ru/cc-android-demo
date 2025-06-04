@@ -23,39 +23,6 @@ class ImagesTest : BaseFilesTestCase() {
     }
 
     @Test
-    fun imagesHistoryTest() {
-        prepareHttpMocks(historyAnswer = readTextFileFromRawResourceId(R.raw.history_images_response))
-        openChatFromDemoLoginPage()
-
-        Thread.sleep(2000)
-
-        ChatMainScreen {
-            chatItemsRecyclerView {
-                waitListForNotEmpty(5000)
-
-                scrollToStart()
-                scrollToEnd()
-
-                lastChild<ChatMainScreen.ChatRecyclerItem> {
-                    val textToCheck = "Великолепно! Как и вот это."
-                    assert("Последний элемент списка должен содержать текст: \"$textToCheck\"") {
-                        itemText.containsText(textToCheck)
-                    }
-                }
-
-                scrollToStart()
-
-                childAt<ChatMainScreen.ChatRecyclerItem>(1) {
-                    image.click()
-                }
-            }
-            imagePager {
-                assert("Image pager (горизонтальная карусель картинок) не должен быть пустым") { isVisible() }
-            }
-        }
-    }
-
-    @Test
     fun operatorImageQuoteTest() {
         val textToType = "Such a beautiful image!"
         prepareHttpMocks(historyAnswer = readTextFileFromRawResourceId(R.raw.history_images_response))

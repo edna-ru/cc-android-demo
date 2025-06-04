@@ -24,6 +24,12 @@
         </intent>
     </queries>
 
+    <instrumentation
+        android:name="edna.chatcenter.demo.TestNoAnimRunner"
+        android:targetPackage="edna.chatcenter.demo"
+        android:handleProfiling="true"
+        android:functionalTest="false"
+        android:process=":isolated_instrumentation" />
 
     <application
         android:name="edna.chatcenter.demo.integrationCode.EdnaChatCenterApplication"

@@ -156,7 +156,14 @@ class EdnaChatCenterApplication : Application() {
             systemMessage = R.color.dark_system_text,
             welcomeScreenTitleText = R.color.dark_system_text,
             welcomeScreenSubtitleText = R.color.dark_system_text,
-            chatErrorScreenImageTint = R.color.white_color
+            chatErrorScreenImageTint = R.color.white_color,
+            searchResultsItemRightArrowTint = R.color.white_color,
+            searchResultBackground = R.color.dark_chat_background,
+            searchResultsDivider = R.color.dark_time_text,
+            searchLoaderTint = R.color.white_color,
+            searchResultsItemMessageText = R.color.dark_messages_text,
+            searchResultsItemNameText = R.color.white_color,
+            searchResultsItemDateText = R.color.dark_messages_text
         )
         val lightImages = ChatImages(
             backBtn = R.drawable.alt_ic_arrow_back_24dp,
@@ -250,13 +257,25 @@ class EdnaChatCenterApplication : Application() {
         )
 
         val settingsPreferences = getSharedPreferences(settingsPreferencesName, Context.MODE_PRIVATE)
+        val isSearchEnabled = settingsPreferences.getBoolean(settingsKeySearch, true)
+        val isLinkPreviewEnabled = settingsPreferences.getBoolean(settingsKeyOpenGraph, true)
+        val isVoiceRecordingEnabled = settingsPreferences.getBoolean(settingsKeyVoiceMessages, true)
+        val isKeepWebSocketActive = settingsPreferences.getBoolean(settingsKeyKeepWebSocket, false)
+
+        chatConfig?.apply {
+            searchEnabled = isSearchEnabled
+            linkPreviewEnabled = isLinkPreviewEnabled
+            voiceRecordingEnabled = isVoiceRecordingEnabled
+            keepWebSocketActive = isKeepWebSocketActive
+        }
+
         val chatConf = chatConfig ?: ChatConfig(
             transportConfig,
             networkConfig,
-            searchEnabled = settingsPreferences.getBoolean(settingsKeySearch, true),
-            linkPreviewEnabled = settingsPreferences.getBoolean(settingsKeyOpenGraph, true),
-            voiceRecordingEnabled = settingsPreferences.getBoolean(settingsKeyVoiceMessages, true),
-            keepWebSocketActive = settingsPreferences.getBoolean(settingsKeyKeepWebSocket, false),
+            searchEnabled = isSearchEnabled,
+            linkPreviewEnabled = isLinkPreviewEnabled,
+            voiceRecordingEnabled = isVoiceRecordingEnabled,
+            keepWebSocketActive = isKeepWebSocketActive,
             autoScrollToLatest = true
         ).apply {
             userInputEnabled = server.isInputEnabled
@@ -287,8 +306,18 @@ class EdnaChatCenterApplication : Application() {
     private fun initUser(callback: (() -> Unit)? = null) {
         val user = preferences.getSelectedUser()
         if (user != null && user.isAllFieldsFilled()) {
+            val userData = try {
+                user.userData?.jsonStringToMap()
+            } catch (exc: Exception) {
+                Toast.makeText(
+                    this,
+                    "Ошибка в поле \"Данные пользователя\". Проверьте соответствие формату Json",
+                    Toast.LENGTH_LONG
+                ).show()
+                null
+            }
             chatCenterUI?.authorize(
-                ChatUser(user.userId!!, data = user.userData?.jsonStringToMap()),
+                ChatUser(user.userId!!, data = userData),
                 ChatAuth(
                     user.authorizationHeader,
                     user.xAuthSchemaHeader,

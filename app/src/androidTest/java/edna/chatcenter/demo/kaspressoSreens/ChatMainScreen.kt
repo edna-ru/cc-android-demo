@@ -7,7 +7,6 @@ import edna.chatcenter.ui.visual.fragments.ChatFragment
 import io.github.kakaocup.kakao.common.views.KView
 import io.github.kakaocup.kakao.edit.KEditText
 import io.github.kakaocup.kakao.image.KImageView
-import io.github.kakaocup.kakao.pager.KViewPager
 import io.github.kakaocup.kakao.recycler.KRecyclerItem
 import io.github.kakaocup.kakao.recycler.KRecyclerView
 import io.github.kakaocup.kakao.slider.KSlider
@@ -35,8 +34,7 @@ object ChatMainScreen : KScreen<ChatMainScreen>() {
     val quoteHeader = KTextView { withId(R.id.quote_header) }
     val quoteClear = KImageView { withId(R.id.quote_clear) }
     val addAttachmentBtn = KImageView { withId(R.id.add_attachment) }
-    val imagePager = KViewPager { withId(R.id.pager) }
-    val popupMenuButton = KButton { withId(R.id.search_menu_button) }
+    val searchButton = KButton { withId(R.id.search_menu_button) }
     val searchInput = KEditText { withId(R.id.searchInput) }
     val searchClearButton = KImageView { withId(R.id.searchClearButton) }
     val searchProgressBar = KImageView { withId(R.id.searchProgressBar) }

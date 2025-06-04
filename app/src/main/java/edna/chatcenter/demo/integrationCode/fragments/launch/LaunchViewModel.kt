@@ -58,6 +58,9 @@ class LaunchViewModel(
     private var _enabledLoginButtonLiveData = MutableLiveData(false)
     var enabledLoginButtonLiveData: LiveData<Boolean> = _enabledLoginButtonLiveData
 
+    private var _incorrectUserLiveData = MutableLiveData(false)
+    var incorrectUserLiveData: LiveData<Boolean> = MutableLiveData(false)
+
     private var application: EdnaChatCenterApplication? = null
 
     fun provideApplication(application: EdnaChatCenterApplication?) {
@@ -96,14 +99,20 @@ class LaunchViewModel(
     }
 
     fun callInitUser(user: UserInfo) {
+        val userData = try {
+            user.userData?.jsonStringToMap()
+        } catch (exc: Exception) {
+            _incorrectUserLiveData.postValue(true)
+            null
+        }
         if (isPreregisterEnabled) {
             application?.chatCenterUI?.forceAuthorize(
-                ChatUser(user.userId!!, data = user.userData?.jsonStringToMap()),
+                ChatUser(user.userId!!, data = userData),
                 ChatAuth(user.authorizationHeader, user.xAuthSchemaHeader, signature = user.signature)
             )
         } else {
             application?.chatCenterUI?.authorize(
-                ChatUser(user.userId!!, data = user.userData?.jsonStringToMap()),
+                ChatUser(user.userId!!, data = userData),
                 ChatAuth(
                     user.authorizationHeader,
                     user.xAuthSchemaHeader,

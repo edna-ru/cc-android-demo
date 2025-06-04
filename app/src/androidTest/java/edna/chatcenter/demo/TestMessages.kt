@@ -307,4 +307,52 @@ object TestMessages {
         "\"externalClientId\":\"15717\",\"origin\":\"threads\"},\"attributes\":\"{\\\"clientId\\\":\\\"15717\\\"," +
         "\\\"operatorName\\\":\\\"Консультант\\\",\\\"isPreRegister\\\":\\\"false\\\",\\\"aps/sound\\\":\\\"default\\\"," +
         "\\\"origin\\\":\\\"threads\\\"}\",\"important\":true,\"messageType\":\"NORMAL\"}]}}"
+
+    const val surveyWithBlockInputMock = "{\"action\":\"getMessages\",\"data\":{\"messages\":[{\"messageId\":" +
+        "\"9c5a7443-ec86-4b34-b965-f52e891dc099\",\"sentAt\":\"2025-05-13T09:29:03.181Z\",\"notification\":" +
+        "\"New chat message received\",\"content\":{\"type\":\"SURVEY\",\"uuid\":\"9c5a7443-ec86-4b34-b965-f52e891dc099\"," +
+        "\"text\":\"{\\\"id\\\":1,\\\"uuid\\\":\\\"9c5a7443-ec86-4b34-b965-f52e891dc099\\\",\\\"sendingId\\\":112," +
+        "\\\"hideAfter\\\":900,\\\"blockInput\\\":true,\\\"questions\\\":[{\\\"id\\\":1,\\\"sendingId\\\":112," +
+        "\\\"text\\\":\\\"Какой-то текст\\\"," +
+        "\\\"displayText\\\":\\\"Какой-то текст\\\",\\\"scale\\\":5,\\\"simple\\\":false}," +
+        "{\\\"id\\\":2,\\\"sendingId\\\":112,\\\"text\\\":\\\"Какой-то текст\\\"," +
+        "\\\"displayText\\\":\\\"Какой-то текст\\\",\\\"scale\\\":5,\\\"simple\\\":true}]}\"," +
+        "\"content\":{\"id\":1,\"uuid\":\"9c5a7443-ec86-4b34-b965-f52e891dc099\",\"sendingId\":112,\"hideAfter\":900," +
+        "\"blockInput\":true,\"questions\":[{\"id\":1,\"sendingId\":112," +
+        "\"text\":\"Какой-то текст\"" +
+        ",\"displayText\":\"Какой-то текст\",\"scale\":5,\"simple\":false},{\"id\":2," +
+        "\"sendingId\":112,\"text\":\"Какой-то текст\"," +
+        "\"displayText\":\"Какой-то текст\",\"scale\":5,\"simple\":true}]}}," +
+        "\"important\":true,\"messageType\":\"NORMAL\"}]},\"createdAt\":1747128543237}"
+
+    val ednaOpenGraphMock = "<!doctype html>\n" +
+        "<html lang=\"ru-RU\">\n" +
+        "<head>\n" +
+        "  <meta charset=\"UTF-8\">\n" +
+        "  <meta property=\"og:locale\" content=\"ru_RU\">\n" +
+        "  <meta property=\"og:type\" content=\"website\">\n" +
+        "  <meta property=\"og:title\" content=\"edna – ведущий поставщик решений и сервисов в области цифровых коммуникаций\">\n" +
+        "  <meta property=\"og:description\" content=\"IT решения для бизнеса в сфере цифровых коммуникаций. Инструменты для роста конверсии, продаж и качества клиентского сервиса. Работаем с 2005 года.\">\n" +
+        "  <meta property=\"og:url\" content=\"https://edna.ru/\">\n" +
+        "  <meta property=\"og:site_name\" content=\"edna\">\n" +
+        "  <meta property=\"og:image\" content=\"https://edna.ru/wp-content/uploads/2023/04/homepage-outro.png\">\n" +
+        "  <title>edna – ведущий поставщик решений и сервисов в области цифровых коммуникаций</title>\n" +
+        "</head>\n" +
+        "<body>\n" +
+        "</body>\n" +
+        "</html>\n"
+
+    const val operatorEdnaRuMessage = "{\"action\":\"getMessages\",\"data\":{\"messages\":[" +
+        "{\"messageId\":\"0238fafc-132e-4a7c-87e6-834d50c3a551\",\"sentAt\":\"2023-09-25T13:07:29.213Z\"," +
+        "\"notification\":\"New chat message received\",\"content\":{\"type\":\"MESSAGE\",\"clientId\":\"545\"," +
+        "\"threadId\":386,\"isPreRegister\":false,\"providerIds\":[],\"uuid\":\"0238fafc-132e-4a7c-87e6-834d50c3a551\"," +
+        "\"operator\":{\"id\":4,\"name\":\"Оператор1 Петровна\",\"photoUrl\":\"20230703-e8c30f10-aa04-417f-bd97-99544fab26f2.jpg\"," +
+        "\"gender\":\"FEMALE\",\"organizationUnit\":\"Skill Credit\",\"role\":\"OPERATOR\"},\"text\":\"edna.ru\"," +
+        "\"receivedDate\":\"2023-09-25T13:07:29.213Z\",\"attachments\":[],\"quotes\":[],\"quickReplies\":[]," +
+        "\"read\":false,\"settings\":{\"blockInput\":false,\"masked\":false},\"authorized\":true," +
+        "\"massPushMessage\":false,\"externalClientId\":\"545\",\"origin\":\"threads\"}," +
+        "\"attributes\":\"{\\\"organizationUnit\\\":\\\"Skill Credit\\\",\\\"clientId\\\":\\\"545\\\"," +
+        "\\\"operatorPhotoUrl\\\":\\\"20230703-e8c30f10-aa04-417f-bd97-99544fab26f2.jpg\\\"," +
+        "\\\"operatorName\\\":\\\"Оператор1 Петровна\\\",\\\"isPreRegister\\\":\\\"false\\\"," +
+        "\\\"aps/sound\\\":\\\"default\\\",\\\"origin\\\":\\\"threads\\\"}\",\"important\":true,\"messageType\":\"NORMAL\"}]}}"
 }

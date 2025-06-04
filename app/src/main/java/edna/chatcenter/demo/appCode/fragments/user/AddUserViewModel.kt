@@ -35,6 +35,7 @@ class AddUserViewModel(
             val user: UserInfo? = if (Build.VERSION.SDK_INT >= 33) {
                 Parcels.unwrap(arguments.getParcelable(UserListFragment.USER_KEY, Parcelable::class.java))
             } else {
+                @Suppress("DEPRECATION")
                 Parcels.unwrap(arguments.getParcelable(UserListFragment.USER_KEY))
             }
             if (user != null) {

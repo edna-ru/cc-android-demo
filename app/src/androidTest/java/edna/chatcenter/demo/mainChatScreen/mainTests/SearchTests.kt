@@ -33,13 +33,11 @@ class SearchTests : BaseTestCase() {
         prepareHttpMocks(historyAnswer = readTextFileFromRawResourceId(R.raw.history_text_response))
         openChatFromDemoLoginPage()
 
-        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-
         ChatMainScreen {
             chatItemsRecyclerView.waitListForNotEmpty(5000)
 
-            assert("Кнопка открытия верхнего должна быть кликабельной") { popupMenuButton.isClickable() }
-            popupMenuButton.click()
+            assert("Кнопка открытия верхнего должна быть кликабельной") { searchButton.isClickable() }
+            searchButton.click()
 
             assert("Поле поиска должно быть видимо") { searchInput.isVisible() }
 
@@ -80,8 +78,8 @@ class SearchTests : BaseTestCase() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
         ChatMainScreen {
-            assert("Кнопка открытия верхнего должна быть кликабельной") { popupMenuButton.isClickable() }
-            popupMenuButton.click()
+            assert("Кнопка открытия верхнего должна быть кликабельной") { searchButton.isClickable() }
+            searchButton.click()
 
             assert("Поле поиска должно быть видимо") { searchInput.isVisible() }
             searchInput.typeText("Edn")

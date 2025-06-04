@@ -348,4 +348,23 @@ class SystemMessages : BaseTestCase() {
             }
         }
     }
+
+    @Test
+    fun whenInputIsBlockedBySurvey_ThenItBlocked() {
+        prepareHttpMocks()
+        openChatFromDemoLoginPage()
+        sendMessageToSocket(TestMessages.surveyWithBlockInputMock)
+
+        ChatMainScreen {
+            chatItemsRecyclerView {
+                waitListForNotEmpty(5000)
+                assert("Список сообщений должен быть видим") { isVisible() }
+            }
+
+            inputEditView.click()
+            assert("Поле ввода не должно быть активно") {
+                inputEditView.isNotFocused()
+            }
+        }
+    }
 }
