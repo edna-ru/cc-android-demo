@@ -5,9 +5,9 @@ plugins {
     id 'com.google.gms.google-services'
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
-    id 'dev.testify'
     id 'com.google.firebase.firebase-perf'
     id 'com.google.firebase.crashlytics'
+    id("com.dropbox.dropshots") version "0.5.0"
 }
 
 android {
@@ -94,7 +94,7 @@ dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'edna.chatcenter.ui.android:release:5.6.0'
+    implementation 'edna.chatcenter.ui.android:release:5.6.1'
     implementation project(path: ':chatcentercore')
 
     implementation 'com.google.firebase:firebase-crashlytics:19.4.3'
@@ -143,4 +143,60 @@ dependencies {
     androidTestImplementation "com.github.tomakehurst:wiremock-standalone:2.27.2"
     androidTestImplementation 'androidx.test.espresso:espresso-intents:3.6.1'
     androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.6.1'
+}
+
+// В файле app/build.gradle (Groovy)
+// В файле app/build.gradle (Groovy)
+// В файле app/build.gradle (Groovy)
+// В файле app/build.gradle (Groovy)
+tasks.register("recordScreenshots") {
+    group = "verification"
+    description = "Записать эталонные скриншоты: только методы @ScreenshotTest + auto-grant all permissions"
+
+    doLast {
+        exec {
+            workingDir = rootProject.projectDir
+            List<String> command = []
+
+            if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+                command.add("cmd")
+                command.add("/c")
+                command.add("gradlew.bat")
+            } else {
+                command.add("./gradlew")
+            }
+
+            command.add(":app:recordDebugAndroidTestScreenshots")
+            command.add("-Pandroid.testInstrumentationRunnerArguments.annotation=edna.chatcenter.demo.screenshot.ScreenshotTest")
+            command.add("-Pandroid.testInstrumentationRunnerArguments.grantPermissions=true")
+
+            commandLine = command
+        }
+    }
+}
+
+tasks.register("verifyScreenshots") {
+    group = "verification"
+    description = "Сравнить скриншоты: только методы @ScreenshotTest + auto-grant all permissions"
+
+    doLast {
+        exec {
+            workingDir = rootProject.projectDir
+            List<String> command = []
+
+            if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+                command.add("cmd")
+                command.add("/c")
+                command.add("gradlew.bat")
+            } else {
+                command.add("./gradlew")
+            }
+
+            command.add(":app:connectedDebugAndroidTest")
+            command.add("-Pandroid.testInstrumentationRunnerArguments.annotation=edna.chatcenter.demo.screenshot.ScreenshotTest")
+            command.add("-Pandroid.testInstrumentationRunnerArguments.grantPermissions=true")
+
+            commandLine = command
+        }
+    }
 }

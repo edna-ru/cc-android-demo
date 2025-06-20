@@ -44,6 +44,7 @@ object ChatMainScreen : KScreen<ChatMainScreen>() {
     val playPauseButton = KImageView { withId(R.id.quote_button_play_pause) }
     val quoteSlider = KSlider { withId(R.id.quote_slider) }
     val fileBottomSheenBtn = KButton { withId(R.id.file) }
+    val scrollDownBtn = KView { withId(R.id.scroll_down_button_container) }
 
     val chatItemsRecyclerView = KRecyclerView(
         builder = { withId(R.id.chatItemsRecycler) },
