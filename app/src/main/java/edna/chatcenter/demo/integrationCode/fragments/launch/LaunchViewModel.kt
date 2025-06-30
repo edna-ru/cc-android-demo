@@ -74,7 +74,7 @@ class LaunchViewModel(
         getSelectedServer()?.let { server ->
             if (server.isAllFieldsFilled()) {
                 _selectedServerLiveData.postValue(server)
-                changeChatCenterSettings(server, testConfig)
+                serversProvider.saveSelectedServer(server)
             }
         }
     }
@@ -192,6 +192,7 @@ class LaunchViewModel(
             if (server != null && server.isAllFieldsFilled()) {
                 _selectedServerLiveData.postValue(server)
                 serversProvider.saveSelectedServer(server)
+                changeChatCenterSettings(server, testConfig)
             }
         }
     }
