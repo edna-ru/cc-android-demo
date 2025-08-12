@@ -31,6 +31,9 @@ class SettingsFragment : BaseAppFragment<FragmentSettingsBinding>(FragmentSettin
         viewModel.keepWebSocketEnabled.observe(viewLifecycleOwner) { isEnabled ->
             webSocketSwitcher.isChecked = isEnabled
         }
+        viewModel.keepWebSocketEnabledDuringSession.observe(viewLifecycleOwner) { isEnabled ->
+            webSocketDuringSessionSwitcher.isChecked = isEnabled
+        }
 
         searchSwitcher.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setSearchEnabled(isChecked)
@@ -43,6 +46,9 @@ class SettingsFragment : BaseAppFragment<FragmentSettingsBinding>(FragmentSettin
         }
         webSocketSwitcher.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setKeepWebSocketEnabled(isChecked)
+        }
+        webSocketDuringSessionSwitcher.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setKeepWebSocketEnabledDuringSession(isChecked)
         }
     }
 

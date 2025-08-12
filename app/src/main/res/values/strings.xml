@@ -80,7 +80,6 @@
     <string name="ok">OK</string>
     <string name="remove">Удалить</string>
     <string name="edit">Изменить</string>
-    <string name="pre_register">Предварительная регистрация</string>
     <string name="no_servers">Нет доступных серверов для запуска</string>
     <string name="no_logs_text">Логов нет</string>
     <string name="to_previous_log">К предыдущему логу</string>
@@ -89,4 +88,5 @@
     <string name="search">Поиск</string>
     <string name="opengraph">Отображение OpenGraph</string>
     <string name="keep_websocket">Оставлять WebSocket активным (тест счетчика)</string>
+    <string name="keep_websocket_during_session">Оставлять WebSocket активным до закрытия диалога</string>
 </resources>

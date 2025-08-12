@@ -28,6 +28,7 @@ import edna.chatcenter.demo.appCode.business.appModule
 import edna.chatcenter.demo.appCode.business.jsonStringToMap
 import edna.chatcenter.demo.appCode.fragments.log.LogViewModel
 import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyKeepWebSocket
+import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyKeepWebSocketDuringSession
 import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyOpenGraph
 import edna.chatcenter.demo.appCode.fragments.settings.settingsKeySearch
 import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyVoiceMessages
@@ -192,6 +193,7 @@ class EdnaChatCenterApplication : Application() {
         chatDarkTheme = ChatTheme(darkChatComponents) // темная тема
         chatLightTheme = ChatTheme(lightChatComponents) // светлая тема
 
+        // Пример альтернативной инициализации
         /*chatLightTheme = ChatTheme(
             lightChatComponents.apply {
                 inputTextComponent.inputMessageColor = R.color.alt_blue
@@ -261,12 +263,14 @@ class EdnaChatCenterApplication : Application() {
         val isLinkPreviewEnabled = settingsPreferences.getBoolean(settingsKeyOpenGraph, true)
         val isVoiceRecordingEnabled = settingsPreferences.getBoolean(settingsKeyVoiceMessages, true)
         val isKeepWebSocketActive = settingsPreferences.getBoolean(settingsKeyKeepWebSocket, false)
+        val isKeepWebSocketActiveDuringSession = settingsPreferences.getBoolean(settingsKeyKeepWebSocketDuringSession, false)
 
         chatConfig?.apply {
             searchEnabled = isSearchEnabled
             linkPreviewEnabled = isLinkPreviewEnabled
             voiceRecordingEnabled = isVoiceRecordingEnabled
             keepWebSocketActive = isKeepWebSocketActive
+            keepSocketActiveDuringOperatorSession = isKeepWebSocketActiveDuringSession
         }
 
         val chatConf = chatConfig ?: ChatConfig(
@@ -276,6 +280,7 @@ class EdnaChatCenterApplication : Application() {
             linkPreviewEnabled = isLinkPreviewEnabled,
             voiceRecordingEnabled = isVoiceRecordingEnabled,
             keepWebSocketActive = isKeepWebSocketActive,
+            keepSocketActiveDuringOperatorSession = isKeepWebSocketActiveDuringSession,
             autoScrollToLatest = true
         ).apply {
             userInputEnabled = server.isInputEnabled

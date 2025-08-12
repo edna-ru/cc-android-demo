@@ -57,6 +57,25 @@ class SettingsTest : BaseTestCase() {
     }
 
     @Test
+    fun testUnreadMessagesCounterWhenDuringSession() {
+        openSettingsPage()
+        SettingsScreen {
+            if (!isUnreadMessagesCounterEnabled()) {
+                keepSocketActiveDuringSessionSetting.click()
+            }
+        }
+        returnFromSettingsPage()
+        openChatFromDemoLoginPage()
+        minimizeApp()
+        sendMessageToSocket(TestMessages.operatorHelloMessage)
+
+        // Ждем пока пробросится лог
+        Thread.sleep(500)
+        val logs = device.logcat.readLogcatRows()
+        assert(logs.any { it.contains("New unread messages count: 1") })
+    }
+
+    @Test
     fun testOpenGraphInvisibleFromOperator() {
         openSettingsPage()
         SettingsScreen {

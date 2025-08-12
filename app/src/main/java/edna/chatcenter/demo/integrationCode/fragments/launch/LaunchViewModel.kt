@@ -49,9 +49,6 @@ class LaunchViewModel(
     private var _selectedUserLiveData = MutableLiveData(getSelectedUser())
     var selectedUserLiveData: LiveData<UserInfo?> = _selectedUserLiveData
 
-    val _preregisterLiveData: MutableLiveData<Boolean> = MutableLiveData()
-    val preregisterLiveData: LiveData<Boolean> = _preregisterLiveData
-
     private var _selectedServerLiveData = MutableLiveData(getSelectedServer())
     var selectedServerConfigLiveData: LiveData<ServerConfig?> = _selectedServerLiveData
 
@@ -83,7 +80,6 @@ class LaunchViewModel(
         super.onStart(owner)
         preferences.resetDemoMode()
         checkUiTheme()
-        initPreregisterCheckbox()
     }
 
     fun click(view: View) {
@@ -105,21 +101,14 @@ class LaunchViewModel(
             _incorrectUserLiveData.postValue(true)
             null
         }
-        if (isPreregisterEnabled) {
-            application?.chatCenterUI?.forceAuthorize(
-                ChatUser(user.userId!!, data = userData),
-                ChatAuth(user.authorizationHeader, user.xAuthSchemaHeader, signature = user.signature)
+        application?.chatCenterUI?.authorize(
+            ChatUser(user.userId!!, data = userData),
+            ChatAuth(
+                user.authorizationHeader,
+                user.xAuthSchemaHeader,
+                signature = user.signature
             )
-        } else {
-            application?.chatCenterUI?.authorize(
-                ChatUser(user.userId!!, data = userData),
-                ChatAuth(
-                    user.authorizationHeader,
-                    user.xAuthSchemaHeader,
-                    signature = user.signature
-                )
-            )
-        }
+        )
     }
 
     private fun login(navigationController: NavController) {
@@ -133,7 +122,7 @@ class LaunchViewModel(
 
         if (serverConfig != null && isUserHasRequiredFields) {
             changeChatCenterSettings(serverConfig, testConfig)
-            if (user != null && !isPreregisterEnabled) callInitUser(user)
+            if (user != null) callInitUser(user)
             navigationController.navigate(R.id.action_LaunchFragment_to_ChatAppFragment)
         }
     }
@@ -162,10 +151,6 @@ class LaunchViewModel(
         if (application?.chatCenterUI != null) {
             applyCurrentUiTheme(CurrentUiTheme.SYSTEM)
         }
-    }
-
-    private fun initPreregisterCheckbox() {
-        _preregisterLiveData.postValue(isPreregisterEnabled)
     }
 
     fun callFragmentResultListener(key: String, bundle: Bundle) {
@@ -201,10 +186,6 @@ class LaunchViewModel(
         selectedUserLiveData.observe(lifecycleOwner) {
             _enabledLoginButtonLiveData.postValue(it?.isAllFieldsFilled())
         }
-    }
-
-    fun onPreregisterCheckedChange(isChecked: Boolean) {
-        isPreregisterEnabled = isChecked
     }
 
     internal fun setSelectedApiVersion(apiVersion: String?) {
@@ -282,9 +263,5 @@ class LaunchViewModel(
         } else {
             null
         }
-    }
-
-    companion object {
-        var isPreregisterEnabled = false
     }
 }

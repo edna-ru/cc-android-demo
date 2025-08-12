@@ -129,6 +129,22 @@
                 android:padding="8dp"
                 style="@style/SwitchStyle"/>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#D3D4D5"/>
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/webSocketDuringSessionSwitcher"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/keep_websocket_during_session"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textOn=""
+                android:textOff=""
+                android:padding="8dp"
+                style="@style/SwitchStyle"/>
+
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 

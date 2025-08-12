@@ -34,7 +34,6 @@ class LaunchFragment : BaseAppFragment<FragmentLaunchBinding>(FragmentLaunchBind
         subscribeForData()
         initReceivers()
         initObservers()
-        initPreregisterCheckBox()
         setResultListeners()
         initView()
         setOnClickListeners()
@@ -96,9 +95,6 @@ class LaunchFragment : BaseAppFragment<FragmentLaunchBinding>(FragmentLaunchBind
         }
         viewModel.selectedUserLiveData.observe(viewLifecycleOwner) {
             userButton.text = it?.userId
-            if (LaunchViewModel.isPreregisterEnabled && it != null && !it.userId.isNullOrBlank()) {
-                viewModel.callInitUser(it)
-            }
         }
         viewModel.enabledLoginButtonLiveData.observe(viewLifecycleOwner) {
             login.isEnabled = it
@@ -109,19 +105,8 @@ class LaunchFragment : BaseAppFragment<FragmentLaunchBinding>(FragmentLaunchBind
     }
 
     private fun initObservers() {
-        viewModel.preregisterLiveData.observe(viewLifecycleOwner) { setValueToPreregisterCheckBox(it) }
         viewLifecycleOwner.lifecycle.addObserver(viewModel)
         viewModel.subscribeForData(viewLifecycleOwner)
-    }
-
-    private fun initPreregisterCheckBox() = getBinding()?.apply {
-        preRegisterCheckBox.setOnClickListener {
-            viewModel.onPreregisterCheckedChange(preRegisterCheckBox.isChecked)
-        }
-    }
-
-    private fun setValueToPreregisterCheckBox(isChecked: Boolean) = getBinding()?.apply {
-        preRegisterCheckBox.isChecked = isChecked
     }
 
     private fun setResultListeners() {

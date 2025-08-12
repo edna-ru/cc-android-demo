@@ -10,6 +10,7 @@ object SettingsScreen : KScreen<SettingsScreen>() {
     override val viewClass: Class<*> = SettingsScreen::class.java
 
     val keepSocketActiveSetting = KSwitch { withId(R.id.webSocketSwitcher) }
+    val keepSocketActiveDuringSessionSetting = KSwitch { withId(R.id.webSocketDuringSessionSwitcher) }
     val openGraphSetting = KSwitch { withId(R.id.openGraphSwitcher) }
     val voiceSetting = KSwitch { withId(R.id.voiceSwitcher) }
     val searchSetting = KSwitch { withId(R.id.searchSwitcher) }
