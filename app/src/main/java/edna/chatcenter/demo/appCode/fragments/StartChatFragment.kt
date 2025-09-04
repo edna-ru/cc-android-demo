@@ -12,6 +12,11 @@ import edna.chatcenter.demo.appCode.business.PreferencesProvider
 import edna.chatcenter.demo.appCode.business.ServersProvider
 import edna.chatcenter.demo.appCode.business.UiThemeProvider
 import edna.chatcenter.demo.databinding.FragmentStartChatBinding
+import edna.chatcenter.demo.integrationCode.EdnaChatCenterApplication
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.java.KoinJavaComponent
 
@@ -25,6 +30,7 @@ class StartChatFragment(private val changeTabCallBack: (Int) -> Unit) :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initListeners()
+        initUnreadCounter()
     }
 
     override fun onResume() {
@@ -43,6 +49,22 @@ class StartChatFragment(private val changeTabCallBack: (Int) -> Unit) :
         logout.setOnClickListener {
             chatCenterUI?.logout()
             findNavController().navigateUp()
+        }
+    }
+
+    private fun initUnreadCounter() {
+        val application = context?.applicationContext as? EdnaChatCenterApplication
+        CoroutineScope(Dispatchers.Main).launch {
+            application?.unreadCountMessagesFlow?.collect { count ->
+                if (count == 0U) {
+                    getBinding()?.unreadCountTextView?.visibility = View.GONE
+                } else {
+                    val text = "${context?.getString(R.string.unread_messages_count)}: $count"
+
+                    getBinding()?.unreadCountTextView?.visibility = View.VISIBLE
+                    getBinding()?.unreadCountTextView?.text = text
+                }
+            }
         }
     }
 

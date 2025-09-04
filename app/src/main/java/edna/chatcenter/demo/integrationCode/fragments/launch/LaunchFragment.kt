@@ -10,7 +10,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.fragment.app.clearFragmentResultListener
 import androidx.fragment.app.setFragmentResultListener
 import edna.chatcenter.core.models.enums.ChatApiVersion
@@ -24,9 +23,7 @@ class LaunchFragment : BaseAppFragment<FragmentLaunchBinding>(FragmentLaunchBind
     private val viewModel: LaunchViewModel by viewModel()
 
     private var initLibReceiver: InitThreadsLibReceiver? = null
-    private var unreadCountReceiver: InitUnreadCountReceiver? = null
     private val initLibFilter = IntentFilter(APP_INIT_THREADS_LIB_ACTION)
-    private val unreadCountFilter = IntentFilter(APP_UNREAD_COUNT_BROADCAST)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -48,10 +45,6 @@ class LaunchFragment : BaseAppFragment<FragmentLaunchBinding>(FragmentLaunchBind
 
     private fun unregisterReceivers() {
         unregisterInitLibReceivers()
-        unreadCountReceiver?.let {
-            requireActivity().unregisterReceiver(it)
-            unreadCountReceiver = null
-        }
     }
 
     private fun unregisterInitLibReceivers() {
@@ -81,7 +74,6 @@ class LaunchFragment : BaseAppFragment<FragmentLaunchBinding>(FragmentLaunchBind
         settingsButton.setOnClickListener { viewModel.click(settingsButton) }
         login.setOnClickListener {
             viewModel.click(login)
-            setUnreadCount(0)
         }
     }
 
@@ -126,7 +118,7 @@ class LaunchFragment : BaseAppFragment<FragmentLaunchBinding>(FragmentLaunchBind
     private fun showSelectApiVersionMenu() {
         getBinding()?.apiSelector?.let { apiSelector ->
             val menu = PopupMenu(requireActivity(), apiSelector)
-            ChatApiVersion.values().forEach {
+            ChatApiVersion.entries.forEach {
                 menu.menu.add(Menu.NONE, 0, 0, it.toString())
             }
             menu.setOnMenuItemClickListener {
@@ -135,11 +127,6 @@ class LaunchFragment : BaseAppFragment<FragmentLaunchBinding>(FragmentLaunchBind
             }
             menu.show()
         }
-    }
-
-    fun setUnreadCount(count: Int) {
-        getBinding()?.count?.isVisible = count > 0
-        getBinding()?.count?.text = count.toString()
     }
 
     private fun initReceivers() {
@@ -152,13 +139,6 @@ class LaunchFragment : BaseAppFragment<FragmentLaunchBinding>(FragmentLaunchBind
                 ContextCompat.RECEIVER_VISIBLE_TO_INSTANT_APPS
             )
         }
-        unreadCountReceiver = InitUnreadCountReceiver(this)
-        ContextCompat.registerReceiver(
-            requireContext(),
-            unreadCountReceiver,
-            unreadCountFilter,
-            ContextCompat.RECEIVER_VISIBLE_TO_INSTANT_APPS
-        )
     }
 
     private fun showWrongUserDataError() {
@@ -167,15 +147,6 @@ class LaunchFragment : BaseAppFragment<FragmentLaunchBinding>(FragmentLaunchBind
             "Ошибка в поле \"Данные пользователя\". Проверьте соответствие формату Json",
             Toast.LENGTH_LONG
         ).show()
-    }
-
-    class InitUnreadCountReceiver(val fragment: LaunchFragment) : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action == APP_UNREAD_COUNT_BROADCAST) {
-                val count = intent.getIntExtra(UNREAD_COUNT_KEY, 0)
-                fragment.setUnreadCount(count)
-            }
-        }
     }
 
     private fun generateAboutText(): String {
@@ -203,7 +174,5 @@ class LaunchFragment : BaseAppFragment<FragmentLaunchBinding>(FragmentLaunchBind
         const val SELECTED_USER_KEY = "selected_user_key"
         const val SELECTED_SERVER_CONFIG_KEY = "selected_server_key"
         const val APP_INIT_THREADS_LIB_ACTION = "APP_INIT_THREADS_LIB_BROADCAST"
-        const val UNREAD_COUNT_KEY = "unread_cont_key"
-        const val APP_UNREAD_COUNT_BROADCAST = "unread_count_broadcast"
     }
 }

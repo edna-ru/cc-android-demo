@@ -9,8 +9,6 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
 import com.microsoft.appcenter.crashes.Crashes
-import edna.chatcenter.core.config.ChatAuth
-import edna.chatcenter.core.config.ChatUser
 import edna.chatcenter.core.config.transport.ChatNetworkConfig
 import edna.chatcenter.core.config.transport.ChatSSLCertificate
 import edna.chatcenter.core.config.transport.ChatTransportConfig
@@ -25,7 +23,6 @@ import edna.chatcenter.demo.R
 import edna.chatcenter.demo.appCode.business.PreferencesProvider
 import edna.chatcenter.demo.appCode.business.ServersProvider
 import edna.chatcenter.demo.appCode.business.appModule
-import edna.chatcenter.demo.appCode.business.jsonStringToMap
 import edna.chatcenter.demo.appCode.fragments.log.LogViewModel
 import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyKeepWebSocket
 import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyKeepWebSocketDuringSession
@@ -45,6 +42,7 @@ import edna.chatcenter.ui.visual.uiStyle.settings.theme.ChatColors
 import edna.chatcenter.ui.visual.uiStyle.settings.theme.ChatImages
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
@@ -64,6 +62,8 @@ class EdnaChatCenterApplication : Application() {
 
     var chatCenterUI: ChatCenterUI? = null
 
+    val unreadCountMessagesFlow = MutableStateFlow(0U)
+
     override fun onCreate() {
         super.onCreate()
         startAppCenter()
@@ -82,7 +82,6 @@ class EdnaChatCenterApplication : Application() {
             coroutineScope.launch {
                 initThemes()
                 initChatCenterUI()
-                initUser()
                 applicationContext.sendBroadcast(
                     Intent(LaunchFragment.APP_INIT_THREADS_LIB_ACTION)
                 )
@@ -90,16 +89,29 @@ class EdnaChatCenterApplication : Application() {
         } else {
             initThemes()
             initChatCenterUI()
-            initUser()
         }
         checkAndUpdateTokens()
+    }
+
+    fun subscribeToUnreadMessages() {
+        chatCenterUI?.setChatCenterUIListener(object : ChatCenterUIListener {
+            override fun unreadMessageCountChanged(count: UInt) {
+                Log.i("ELog", "New unread messages count: $count")
+                CoroutineScope(Dispatchers.Main).launch { unreadCountMessagesFlow.emit(count) }
+            }
+
+            override fun urlClicked(url: String) {
+                super.urlClicked(url)
+                Log.i("UrlClicked", url)
+            }
+        })
     }
 
     private fun checkAndUpdateTokens() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val token = task.result
-                chatCenterUI?.setFcmToken(token)
+                ChatCenterUI.setFCMToken(token, applicationContext)
             }
         }
         coroutineScope.launch {
@@ -290,46 +302,6 @@ class EdnaChatCenterApplication : Application() {
             theme = chatLightTheme
             darkTheme = chatDarkTheme
             init(server.threadsGateProviderUid ?: "", server.appMarker ?: "", chatConf)
-        }
-
-        chatCenterUI?.setChatCenterUIListener(object : ChatCenterUIListener {
-            override fun unreadMessageCountChanged(count: UInt) {
-                Log.i("ELog", "New unread messages count: $count")
-
-                val intent = Intent(LaunchFragment.APP_UNREAD_COUNT_BROADCAST)
-                intent.putExtra(LaunchFragment.UNREAD_COUNT_KEY, count.toInt())
-                sendBroadcast(intent)
-            }
-
-            override fun urlClicked(url: String) {
-                super.urlClicked(url)
-                Log.i("UrlClicked", url)
-            }
-        })
-    }
-
-    private fun initUser(callback: (() -> Unit)? = null) {
-        val user = preferences.getSelectedUser()
-        if (user != null && user.isAllFieldsFilled()) {
-            val userData = try {
-                user.userData?.jsonStringToMap()
-            } catch (exc: Exception) {
-                Toast.makeText(
-                    this,
-                    "Ошибка в поле \"Данные пользователя\". Проверьте соответствие формату Json",
-                    Toast.LENGTH_LONG
-                ).show()
-                null
-            }
-            chatCenterUI?.authorize(
-                ChatUser(user.userId!!, data = userData),
-                ChatAuth(
-                    user.authorizationHeader,
-                    user.xAuthSchemaHeader,
-                    signature = user.signature
-                )
-            )
-            callback?.invoke()
         }
     }
 

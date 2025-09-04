@@ -89,4 +89,5 @@
     <string name="opengraph">Отображение OpenGraph</string>
     <string name="keep_websocket">Оставлять WebSocket активным (тест счетчика)</string>
     <string name="keep_websocket_during_session">Оставлять WebSocket активным до закрытия диалога</string>
+    <string name="unread_messages_count">Кол-во непрочитанных сообщений</string>
 </resources>

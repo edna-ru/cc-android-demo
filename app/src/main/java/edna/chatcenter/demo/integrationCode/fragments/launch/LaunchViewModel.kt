@@ -109,6 +109,7 @@ class LaunchViewModel(
                 signature = user.signature
             )
         )
+        application?.subscribeToUnreadMessages()
     }
 
     private fun login(navigationController: NavController) {

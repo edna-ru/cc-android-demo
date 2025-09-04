@@ -24,7 +24,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/logo"
-        app:layout_constraintBottom_toTopOf="@id/about">
+        app:layout_constraintBottom_toTopOf="@id/about"
+        android:animateLayoutChanges="true">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/unreadCountTextView"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:ellipsize="middle"
+            android:textColor="@color/alt_black"
+            android:visibility="gone"
+            tools:visibility="visible"
+            tools:text="Кол-во непрочитанных сообщений: 5"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/goToChat"
