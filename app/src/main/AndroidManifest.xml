@@ -82,7 +82,8 @@
             </intent-filter>
         </service>
 
-        <receiver android:name="edna.chatcenter.demo.integrationCode.fragments.launch.LaunchFragment$InitThreadsLibReceiver" android:exported="false"
+        <receiver android:name="edna.chatcenter.demo.integrationCode.fragments.launch.LaunchFragment$InitThreadsLibReceiver"
+            android:exported="false"
             tools:ignore="Instantiatable">
             <intent-filter>
                 <action android:name="APP_INIT_THREADS_LIB_BROADCAST" />

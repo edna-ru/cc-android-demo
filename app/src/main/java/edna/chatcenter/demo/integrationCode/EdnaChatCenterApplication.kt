@@ -82,9 +82,12 @@ class EdnaChatCenterApplication : Application() {
             coroutineScope.launch {
                 initThemes()
                 initChatCenterUI()
-                applicationContext.sendBroadcast(
-                    Intent(LaunchFragment.APP_INIT_THREADS_LIB_ACTION)
-                )
+                val intent = Intent(LaunchFragment.APP_INIT_THREADS_LIB_ACTION)
+                    .setClass(
+                        this@EdnaChatCenterApplication,
+                        LaunchFragment.InitThreadsLibReceiver::class.java
+                    )
+                applicationContext.sendBroadcast(intent)
             }
         } else {
             initThemes()

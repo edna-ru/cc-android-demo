@@ -157,7 +157,7 @@ class LaunchFragment : BaseAppFragment<FragmentLaunchBinding>(FragmentLaunchBind
     }
 
     fun onThreadsLibInitialized() {
-        setToolbarColor()
+        setBarsColor()
         viewModel.checkUiTheme()
         unregisterInitLibReceivers()
     }

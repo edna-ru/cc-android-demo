@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 buildscript {
     ext.kotlin_version = '1.9.10'
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.1.1'
+        classpath 'com.android.tools.build:gradle:8.6.1'
         classpath 'com.google.gms:google-services:4.4.2'
         classpath 'net.researchgate:gradle-release:2.8.1'
         classpath 'com.huawei.agconnect:agcp:1.9.1.300'
@@ -17,8 +17,8 @@ buildscript {
 }
 
 plugins {
-    id 'com.android.application' version '8.1.1' apply false
-    id 'com.android.library' version '8.1.1' apply false
+    id 'com.android.application' version '8.6.1' apply false
+    id 'com.android.library' version '8.6.1' apply false
     id 'org.jetbrains.kotlin.android' version '1.9.10' apply false
     id 'org.jlleitschuh.gradle.ktlint' version "10.3.0"
     id 'com.google.firebase.crashlytics' version '3.0.3' apply false
@@ -42,7 +42,7 @@ task clean(type: Delete) {
 }
 
 ext {
-    compileSdkVersion = 34
+    compileSdkVersion = 35
     minSdkVersion = 21
-    targetSdkVersion = 34
+    targetSdkVersion = 35
 }
