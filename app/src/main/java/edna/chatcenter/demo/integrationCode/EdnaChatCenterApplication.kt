@@ -179,7 +179,11 @@ class EdnaChatCenterApplication : Application() {
             searchLoaderTint = R.color.white_color,
             searchResultsItemMessageText = R.color.dark_messages_text,
             searchResultsItemNameText = R.color.white_color,
-            searchResultsItemDateText = R.color.dark_messages_text
+            searchResultsItemDateText = R.color.dark_messages_text,
+            buttonSurveyTextButtonColor = R.color.dark_messages_text,
+            surveyButtonBackgroundTintColor = R.color.dark_incoming_bubble,
+            quickReplyButtonBackgroundTint = R.color.dark_incoming_bubble,
+            quickRepliesText = R.color.dark_messages_text
         )
         val lightImages = ChatImages(
             backBtn = R.drawable.alt_ic_arrow_back_24dp,
