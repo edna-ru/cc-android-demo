@@ -92,5 +92,5 @@
     <string name="unread_messages_count">Кол-во непрочитанных сообщений</string>
 
     <!-- Пример переопределения строки в SDK -->
-    <string name="ecc_input_placeholder">Type your message</string>
+    <string name="ecc_input_placeholder">Сообщение</string>
 </resources>

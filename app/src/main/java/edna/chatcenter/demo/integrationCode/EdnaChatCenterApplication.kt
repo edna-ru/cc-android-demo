@@ -38,6 +38,7 @@ import edna.chatcenter.ui.visual.ChatConfig
 import edna.chatcenter.ui.visual.core.ChatCenterUI
 import edna.chatcenter.ui.visual.uiStyle.settings.ChatTheme
 import edna.chatcenter.ui.visual.uiStyle.settings.components.ChatComponents
+import edna.chatcenter.ui.visual.uiStyle.settings.flows.ChatFlows
 import edna.chatcenter.ui.visual.uiStyle.settings.theme.ChatColors
 import edna.chatcenter.ui.visual.uiStyle.settings.theme.ChatImages
 import kotlinx.coroutines.CoroutineScope
@@ -209,8 +210,8 @@ class EdnaChatCenterApplication : Application() {
             navigationBarStyle = navigationBarStyle.copy(closeButtonEnabled = false)
         }
 
-        chatDarkTheme = ChatTheme(darkChatComponents) // темная тема
-        chatLightTheme = ChatTheme(lightChatComponents) // светлая тема
+        // chatDarkTheme = ChatTheme(darkChatComponents) // темная тема
+        // chatLightTheme = ChatTheme(lightChatComponents) // светлая тема
 
         // Пример альтернативной инициализации
         /*chatLightTheme = ChatTheme(
@@ -221,15 +222,49 @@ class EdnaChatCenterApplication : Application() {
 
         // chatLightTheme = ChatTheme(applicationContext, lightColors, lightImages) // можно передать только нужные ресуры
 
-//        val flows = ChatFlows(ChatComponents(applicationContext)).apply {
-//            chatFlow.navigationBar.backButton = IconButtonChatStyle(
-//                IconButtonColorStyle(
-//                    iconTintColor = R.color.blue_color
-//                ),
-//                R.drawable.ic_cloud
-//            )
-//        }
-//        chatLightTheme = ChatTheme(flows) // создайте инстанс, переопределив точечно нужные элементы
+        val lightFlows = ChatFlows(lightChatComponents).apply {
+            chatFlow.outcomeMessages.imagesTimeTextWhenError = chatFlow.outcomeMessages.imagesTimeText.copy(
+                textColor = R.color.white_color
+            )
+            chatFlow.outcomeMessages.timeTextWhenError = chatFlow.outcomeMessages.timeText.copy(
+                textColor = R.color.white_color
+            )
+            chatFlow.outcomeMessages.openGraphTimeTextWhenError = chatFlow.outcomeMessages.openGraphTimeText.copy(
+                textColor = R.color.white_color
+            )
+            chatFlow.incomeMessages.imagesTimeTextWhenError = chatFlow.incomeMessages.imagesTimeText.copy(
+                textColor = R.color.white_color
+            )
+            chatFlow.incomeMessages.timeTextWhenError = chatFlow.incomeMessages.timeText.copy(
+                textColor = R.color.white_color
+            )
+            chatFlow.incomeMessages.openGraphTimeTextWhenError = chatFlow.incomeMessages.openGraphTimeText.copy(
+                textColor = R.color.white_color
+            )
+        }
+        chatLightTheme = ChatTheme(lightFlows) // создайте инстанс, переопределив точечно нужные элементы
+
+        val darkFlows = ChatFlows(darkChatComponents).apply {
+            chatFlow.outcomeMessages.imagesTimeTextWhenError = chatFlow.outcomeMessages.imagesTimeText.copy(
+                textColor = R.color.white_color
+            )
+            chatFlow.outcomeMessages.timeTextWhenError = chatFlow.outcomeMessages.timeText.copy(
+                textColor = R.color.white_color
+            )
+            chatFlow.outcomeMessages.openGraphTimeTextWhenError = chatFlow.outcomeMessages.openGraphTimeText.copy(
+                textColor = R.color.white_color
+            )
+            chatFlow.incomeMessages.imagesTimeTextWhenError = chatFlow.incomeMessages.imagesTimeText.copy(
+                textColor = R.color.white_color
+            )
+            chatFlow.incomeMessages.timeTextWhenError = chatFlow.incomeMessages.timeText.copy(
+                textColor = R.color.white_color
+            )
+            chatFlow.incomeMessages.openGraphTimeTextWhenError = chatFlow.incomeMessages.openGraphTimeText.copy(
+                textColor = R.color.white_color
+            )
+        }
+        chatDarkTheme = ChatTheme(darkFlows) // создайте инстанс, переопределив точечно нужные элементы
     }
 
     fun initChatCenterUI(

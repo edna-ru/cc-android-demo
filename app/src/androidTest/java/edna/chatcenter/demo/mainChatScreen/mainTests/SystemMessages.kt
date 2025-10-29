@@ -209,7 +209,7 @@ class SystemMessages : BaseTestCase() {
 
         ChatMainScreen {
             toolbarSubtitle {
-                val typingText = context.getString(edna.chatcenter.ui.R.string.ecc_typing)
+                val typingText = context.getString(edna.chatcenter.ui.R.string.ecc_chat_title_typing)
                 assert("Подзаголовок тулбара должен быть видимый") { isVisible() }
                 assert("Подзаголовок тулбара должен содержать текст: $typingText") {
                     hasText(

@@ -335,7 +335,7 @@ class TextMessagesTest : BaseTestCase(
         Thread.sleep(500)
 
         ChatMainScreen {
-            val operatorName = context.getString(edna.chatcenter.ui.R.string.ecc_searching_operator)
+            val operatorName = context.getString(edna.chatcenter.ui.R.string.ecc_chat_title_waiting_for_specialist)
             assert("Имя оператора в тулбаре должно быть: \"$operatorName\"") {
                 toolbarOperatorName.containsText(operatorName)
             }
