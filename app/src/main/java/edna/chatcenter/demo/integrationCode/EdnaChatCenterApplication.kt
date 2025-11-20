@@ -184,7 +184,8 @@ class EdnaChatCenterApplication : Application() {
             buttonSurveyTextButtonColor = R.color.dark_messages_text,
             surveyButtonBackgroundTintColor = R.color.dark_incoming_bubble,
             quickReplyButtonBackgroundTint = R.color.dark_incoming_bubble,
-            quickRepliesText = R.color.dark_messages_text
+            quickRepliesText = R.color.dark_messages_text,
+            popupsBackground = R.color.dark_chat_background
         )
         val lightImages = ChatImages(
             backBtn = R.drawable.alt_ic_arrow_back_24dp,
