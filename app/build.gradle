@@ -31,15 +31,6 @@ android {
         execution 'ANDROIDX_TEST_ORCHESTRATOR'
     }
 
-    signingConfigs {
-        debug {
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
-            storePassword 'android'
-            storeFile file('debug.keystore')
-        }
-    }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -96,7 +87,6 @@ dependencies {
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'edna.chatcenter.ui.android:release:5.14.0'
-    implementation project(path: ':chatcentercore')
 
     implementation 'com.google.firebase:firebase-crashlytics:19.4.3'
     implementation "androidx.core:core-ktx:1.12.0"
