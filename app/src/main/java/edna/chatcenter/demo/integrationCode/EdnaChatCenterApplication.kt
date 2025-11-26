@@ -39,6 +39,7 @@ import edna.chatcenter.ui.visual.core.ChatCenterUI
 import edna.chatcenter.ui.visual.uiStyle.settings.ChatTheme
 import edna.chatcenter.ui.visual.uiStyle.settings.components.ChatComponents
 import edna.chatcenter.ui.visual.uiStyle.settings.flows.ChatFlows
+import edna.chatcenter.ui.visual.uiStyle.settings.styles.ImagesChatStyle
 import edna.chatcenter.ui.visual.uiStyle.settings.theme.ChatColors
 import edna.chatcenter.ui.visual.uiStyle.settings.theme.ChatImages
 import kotlinx.coroutines.CoroutineScope
@@ -263,6 +264,10 @@ class EdnaChatCenterApplication : Application() {
             )
             chatFlow.incomeMessages.openGraphTimeTextWhenError = chatFlow.incomeMessages.openGraphTimeText.copy(
                 textColor = R.color.white_color
+            )
+            chatFlow.quotePlayPauseButton = ImagesChatStyle(
+                imageResId = edna.chatcenter.ui.R.drawable.ecc_voice_message_play,
+                tintColor = R.color.dark_main
             )
         }
         chatDarkTheme = ChatTheme(darkFlows) // создайте инстанс, переопределив точечно нужные элементы
