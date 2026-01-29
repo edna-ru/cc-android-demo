@@ -111,9 +111,7 @@ class ChatAppFragment : BaseAppFragment<FragmentChatBinding>(FragmentChatBinding
                     fragment ?: ChatFragment.newInstance(edna.chatcenter.core.annotation.OpenWay.DEFAULT)
                 }
                 TAB_INDEX_LOG -> logFragment
-                else -> StartChatFragment { tabIndex ->
-                    changeTab(tabIndex)
-                }
+                else -> StartChatFragment()
             }
         }
 

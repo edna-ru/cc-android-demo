@@ -15,12 +15,11 @@ import edna.chatcenter.demo.databinding.FragmentStartChatBinding
 import edna.chatcenter.demo.integrationCode.EdnaChatCenterApplication
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.java.KoinJavaComponent
 
-class StartChatFragment(private val changeTabCallBack: (Int) -> Unit) :
+class StartChatFragment() :
     BaseAppFragment<FragmentStartChatBinding>(FragmentStartChatBinding::inflate) {
 
     private val uiThemeProvider: UiThemeProvider by KoinJavaComponent.inject(UiThemeProvider::class.java)
@@ -49,6 +48,9 @@ class StartChatFragment(private val changeTabCallBack: (Int) -> Unit) :
         logout.setOnClickListener {
             chatCenterUI?.logout()
             findNavController().navigateUp()
+        }
+        prefill.setOnClickListener {
+            chatCenterUI?.prefill("Добрый день! У меня есть вопрос")
         }
     }
 

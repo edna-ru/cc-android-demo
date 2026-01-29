@@ -50,15 +50,23 @@
             android:layout_marginTop="12dp"
             android:text="@string/exit"/>
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/prefill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/prefill_chat_input"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp"/>
+
     </LinearLayout>
 
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/about"
         style="@style/LogoTextStyle"
+        android:layout_width="wrap_content"
         android:layout_marginBottom="@dimen/login_screen_top_margin_large"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="Server: mobile1\nUser: 533\nApi Version: 15" />
 
