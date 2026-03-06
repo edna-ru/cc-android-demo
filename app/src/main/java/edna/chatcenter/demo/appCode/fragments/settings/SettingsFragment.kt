@@ -19,6 +19,9 @@ class SettingsFragment : BaseAppFragment<FragmentSettingsBinding>(FragmentSettin
     }
 
     private fun initSwitchers() = getBinding()?.apply {
+        viewModel.asyncInitEnabled.observe(viewLifecycleOwner) { isEnabled ->
+            asyncInitSwitcher.isChecked = isEnabled
+        }
         viewModel.searchEnabled.observe(viewLifecycleOwner) { isEnabled ->
             searchSwitcher.isChecked = isEnabled
         }
@@ -35,6 +38,9 @@ class SettingsFragment : BaseAppFragment<FragmentSettingsBinding>(FragmentSettin
             webSocketDuringSessionSwitcher.isChecked = isEnabled
         }
 
+        asyncInitSwitcher.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setAsyncInitEnabled(isChecked)
+        }
         searchSwitcher.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setSearchEnabled(isChecked)
         }

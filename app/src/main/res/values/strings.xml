@@ -85,6 +85,7 @@
     <string name="to_previous_log">К предыдущему логу</string>
     <string name="to_next_log">К следущему логу</string>
     <string name="sdk_settings">настройки sdk</string>
+    <string name="async_init">Асинхронная инициализация SDK</string>
     <string name="search">Поиск</string>
     <string name="opengraph">Отображение OpenGraph</string>
     <string name="keep_websocket">Оставлять WebSocket активным (тест счетчика)</string>

@@ -6,6 +6,7 @@ import android.util.Base64
 import com.huawei.hms.push.HmsMessageService
 import com.huawei.hms.push.RemoteMessage
 import edna.chatcenter.demo.integrationCode.EdnaChatCenterApplication
+import edna.chatcenter.ui.visual.core.ChatCenterUI
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.UnsupportedEncodingException
@@ -14,8 +15,7 @@ class CustomPushHcmIntentService : HmsMessageService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        val application = applicationContext as EdnaChatCenterApplication
-        application.chatCenterUI?.setHcmToken(token)
+        ChatCenterUI.setHCMToken(token, applicationContext)
     }
 
     @SuppressLint("RestrictedApi")

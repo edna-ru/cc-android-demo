@@ -71,6 +71,22 @@
             android:padding="8dp">
 
             <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/asyncInitSwitcher"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textOn=""
+                android:textOff=""
+                android:padding="8dp"
+                android:text="@string/async_init"
+                style="@style/SwitchStyle"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#D3D4D5"/>
+
+            <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/searchSwitcher"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

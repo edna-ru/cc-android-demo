@@ -24,6 +24,7 @@ import edna.chatcenter.demo.appCode.business.PreferencesProvider
 import edna.chatcenter.demo.appCode.business.ServersProvider
 import edna.chatcenter.demo.appCode.business.appModule
 import edna.chatcenter.demo.appCode.fragments.log.LogViewModel
+import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyAsyncInit
 import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyKeepWebSocket
 import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyKeepWebSocketDuringSession
 import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyOpenGraph
@@ -57,12 +58,13 @@ class EdnaChatCenterApplication : Application() {
     private var chatLightTheme: ChatTheme? = null
     private var chatDarkTheme: ChatTheme? = null
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
-    private val asyncInit = false
 
     private val serversProvider: ServersProvider by inject()
     private val preferences: PreferencesProvider by inject()
 
     var chatCenterUI: ChatCenterUI? = null
+    var isSdkInitializing = false
+        private set
 
     val unreadCountMessagesFlow = MutableStateFlow(0U)
 
@@ -80,10 +82,11 @@ class EdnaChatCenterApplication : Application() {
     }
 
     private fun initLibrary() {
-        if (asyncInit) {
-            coroutineScope.launch {
-                initThemes()
-                initChatCenterUI()
+        initThemes()
+        initChatCenterUI { isAsyncInit ->
+            checkAndUpdateTokens()
+
+            if (isAsyncInit) {
                 val intent = Intent(LaunchFragment.APP_INIT_THREADS_LIB_ACTION)
                     .setClass(
                         this@EdnaChatCenterApplication,
@@ -91,11 +94,7 @@ class EdnaChatCenterApplication : Application() {
                     )
                 applicationContext.sendBroadcast(intent)
             }
-        } else {
-            initThemes()
-            initChatCenterUI()
         }
-        checkAndUpdateTokens()
     }
 
     fun subscribeToUnreadMessages() {
@@ -165,6 +164,8 @@ class EdnaChatCenterApplication : Application() {
             messageDeliveredStatus = R.color.dark_icons,
             messageReadStatus = R.color.dark_icons,
             messageFailedStatus = R.color.dark_icons,
+            messagePopupMenuBackground = R.color.dark_main,
+            messagePopupMenuItem = R.color.white_color,
             incomingLink = R.color.dark_links,
             outgoingLink = R.color.dark_links,
             statusBar = R.color.alt_threads_chat_status_bar,
@@ -276,8 +277,10 @@ class EdnaChatCenterApplication : Application() {
     fun initChatCenterUI(
         serverConfig: ServerConfig? = null,
         chatConfig: ChatConfig? = null,
-        apiVersion: ChatApiVersion = ChatApiVersion.defaultApiVersionEnum
+        apiVersion: ChatApiVersion = ChatApiVersion.defaultApiVersionEnum,
+        onInitComplete: (isAsyncInit: Boolean) -> Unit = {},
     ) {
+        isSdkInitializing = true
         val loggerConfig = ChatLoggerConfig(
             applicationContext,
             logFileSize = 50,
@@ -346,10 +349,30 @@ class EdnaChatCenterApplication : Application() {
             userInputEnabled = server.isInputEnabled
         }
 
+        val needInitAsynchronously = settingsPreferences.getBoolean(settingsKeyAsyncInit, true)
         chatCenterUI = ChatCenterUI(applicationContext, loggerConfig).apply {
             theme = chatLightTheme
             darkTheme = chatDarkTheme
-            init(server.threadsGateProviderUid ?: "", server.appMarker ?: "", chatConf)
+
+            if (needInitAsynchronously) {
+                initAsync(
+                    providerUid = server.threadsGateProviderUid ?: "",
+                    appMarker = server.appMarker ?: "",
+                    config = chatConf,
+                    onInitComplete = {
+                        isSdkInitializing = false
+                        onInitComplete(true)
+                    }
+                )
+            } else {
+                init(
+                    providerUid = server.threadsGateProviderUid ?: "",
+                    appMarker = server.appMarker ?: "",
+                    config = chatConf,
+                )
+                isSdkInitializing = false
+                onInitComplete(false)
+            }
         }
     }
 

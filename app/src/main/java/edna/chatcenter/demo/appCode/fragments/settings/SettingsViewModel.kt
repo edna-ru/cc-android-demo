@@ -6,11 +6,15 @@ import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.core.content.edit
 
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {
 
     private val sharedPreferences: SharedPreferences = getApplication<Application>()
         .getSharedPreferences(settingsPreferencesName, Context.MODE_PRIVATE)
+
+    private val _asyncInitEnabled = MutableLiveData(sharedPreferences.getBoolean(settingsKeyAsyncInit, true))
+    val asyncInitEnabled: LiveData<Boolean> = _asyncInitEnabled
 
     private val _searchEnabled = MutableLiveData(sharedPreferences.getBoolean(settingsKeySearch, true))
     val searchEnabled: LiveData<Boolean> = _searchEnabled
@@ -27,33 +31,39 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     private val _keepWebSocketEnabledDuringSession = MutableLiveData(sharedPreferences.getBoolean(settingsKeyKeepWebSocketDuringSession, false))
     val keepWebSocketEnabledDuringSession: LiveData<Boolean> = _keepWebSocketEnabledDuringSession
 
+    fun setAsyncInitEnabled(enabled: Boolean) {
+        _asyncInitEnabled.value = enabled
+        sharedPreferences.edit { putBoolean(settingsKeyAsyncInit, enabled) }
+    }
+
     fun setSearchEnabled(enabled: Boolean) {
         _searchEnabled.value = enabled
-        sharedPreferences.edit().putBoolean(settingsKeySearch, enabled).apply()
+        sharedPreferences.edit { putBoolean(settingsKeySearch, enabled) }
     }
 
     fun setVoiceMessagesEnabled(enabled: Boolean) {
         _voiceMessagesEnabled.value = enabled
-        sharedPreferences.edit().putBoolean(settingsKeyVoiceMessages, enabled).apply()
+        sharedPreferences.edit { putBoolean(settingsKeyVoiceMessages, enabled) }
     }
 
     fun setOpenGraphEnabled(enabled: Boolean) {
         _openGraphEnabled.value = enabled
-        sharedPreferences.edit().putBoolean(settingsKeyOpenGraph, enabled).apply()
+        sharedPreferences.edit { putBoolean(settingsKeyOpenGraph, enabled) }
     }
 
     fun setKeepWebSocketEnabled(enabled: Boolean) {
         _keepWebSocketEnabled.value = enabled
-        sharedPreferences.edit().putBoolean(settingsKeyKeepWebSocket, enabled).apply()
+        sharedPreferences.edit { putBoolean(settingsKeyKeepWebSocket, enabled) }
     }
 
     fun setKeepWebSocketEnabledDuringSession(enabled: Boolean) {
         _keepWebSocketEnabledDuringSession.value = enabled
-        sharedPreferences.edit().putBoolean(settingsKeyKeepWebSocketDuringSession, enabled).apply()
+        sharedPreferences.edit { putBoolean(settingsKeyKeepWebSocketDuringSession, enabled) }
     }
 }
 
 const val settingsPreferencesName: String = "sdk_settings"
+const val settingsKeyAsyncInit: String = "sdk_async_init_enabled"
 const val settingsKeySearch: String = "sdk_search_enabled"
 const val settingsKeyVoiceMessages: String = "sdk_voice_messages_enabled"
 const val settingsKeyOpenGraph: String = "sdk_opengraph_enabled"

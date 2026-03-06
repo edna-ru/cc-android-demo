@@ -94,7 +94,26 @@ class LaunchViewModel(
         }
     }
 
-    fun callInitUser(user: UserInfo) {
+    private fun login(navigationController: NavController) {
+        val isSDKInitInProgress = application?.isSdkInitializing == true
+
+        if (application?.chatCenterUI == null || isSDKInitInProgress) {
+            return
+        }
+
+        val serverConfig = _selectedServerLiveData.value
+        val user = _selectedUserLiveData.value
+        val isUserHasRequiredFields = user?.userId != null
+
+        if (serverConfig != null && isUserHasRequiredFields) {
+            changeChatCenterSettings(serverConfig, testConfig) {
+                if (user != null) callInitUser(user)
+                navigationController.navigate(R.id.action_LaunchFragment_to_ChatAppFragment)
+            }
+        }
+    }
+
+    private fun callInitUser(user: UserInfo) {
         val userData = try {
             user.userData?.jsonStringToMap()
         } catch (exc: Exception) {
@@ -112,30 +131,23 @@ class LaunchViewModel(
         application?.subscribeToUnreadMessages()
     }
 
-    private fun login(navigationController: NavController) {
-        if (application?.chatCenterUI == null) {
-            return
-        }
-
-        val serverConfig = _selectedServerLiveData.value
-        val user = _selectedUserLiveData.value
-        val isUserHasRequiredFields = user?.userId != null
-
-        if (serverConfig != null && isUserHasRequiredFields) {
-            changeChatCenterSettings(serverConfig, testConfig)
-            if (user != null) callInitUser(user)
-            navigationController.navigate(R.id.action_LaunchFragment_to_ChatAppFragment)
-        }
-    }
-
-    private fun changeChatCenterSettings(serverConfig: ServerConfig, config: ChatConfig?) {
+    private fun changeChatCenterSettings(
+        serverConfig: ServerConfig,
+        config: ChatConfig?,
+        onComplete: () -> Unit = {}
+    ) {
         var apiVersion: ChatApiVersion? = _selectedApiVersionLiveData.value?.let {
             ChatApiVersion.createApiVersionEnum(it)
         }
         if (apiVersion == null) {
             apiVersion = ChatApiVersion.defaultApiVersionEnum
         }
-        application?.initChatCenterUI(serverConfig, config, apiVersion)
+        application?.initChatCenterUI(
+            serverConfig = serverConfig,
+            chatConfig = config,
+            apiVersion = apiVersion,
+            onInitComplete = { onComplete() }
+        )
     }
 
     private fun applyCurrentUiTheme(currentUiTheme: CurrentUiTheme) {
