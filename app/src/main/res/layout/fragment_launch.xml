@@ -8,6 +8,7 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/settingsButton"
+        style="@style/SettingsButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:padding="13dp"

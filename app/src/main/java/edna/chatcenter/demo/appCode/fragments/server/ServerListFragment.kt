@@ -2,6 +2,12 @@ package edna.chatcenter.demo.appCode.fragments.server
 
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.marginBottom
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.fragment.app.clearFragmentResultListener
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
@@ -18,7 +24,6 @@ import edna.chatcenter.demo.integrationCode.fragments.launch.LaunchFragment.Comp
 import edna.chatcenter.ui.visual.utils.EdnaColors
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.parceler.Parcels
 import java.lang.ref.WeakReference
 
 class ServerListFragment :
@@ -32,6 +37,7 @@ class ServerListFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
+        setupInsets(view)
         setResultListeners()
         createAdapter()
         subscribeForData()
@@ -46,6 +52,10 @@ class ServerListFragment :
         clearResultListeners()
     }
 
+    override fun needHandleInsets(): Boolean {
+        return false
+    }
+
     override fun navigateUp() {
         viewModel.backToLaunchScreen(activity)
     }
@@ -53,7 +63,7 @@ class ServerListFragment :
     override fun onClick(position: Int) {
         val item = adapter?.get()?.getItem(position)
         val args = Bundle()
-        args.putParcelable(SELECTED_SERVER_CONFIG_KEY, Parcels.wrap(item))
+        args.putParcelable(SELECTED_SERVER_CONFIG_KEY, item)
         setFragmentResult(SELECTED_SERVER_CONFIG_KEY, args)
         viewModel.backToLaunchScreen(activity)
     }
@@ -62,7 +72,7 @@ class ServerListFragment :
         val item = adapter?.get()?.getItem(position)
         val navigationController = activity?.findNavController(R.id.nav_host_fragment_content_main)
         val args = Bundle()
-        args.putParcelable(SERVER_CONFIG_KEY, Parcels.wrap(item))
+        args.putParcelable(SERVER_CONFIG_KEY, item)
         navigationController?.navigate(R.id.action_ServerListFragment_to_AddServerFragment, args)
     }
 
@@ -107,6 +117,23 @@ class ServerListFragment :
         } else {
             EdnaColors.setTint(activity, addServer, R.color.white_color_fa)
             addServer.setBackgroundResource(R.drawable.buttons_bg_selector)
+        }
+    }
+
+    private fun setupInsets(view: View) {
+        val binding = this@ServerListFragment.binding?.get() ?: return
+        val addUserMarginBottom = binding.addServer.marginBottom
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, windowInsets ->
+            val systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val systemBottom = systemBars.bottom
+            binding.toolbar.updatePadding(top = systemBars.top)
+            binding.addServer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = systemBottom + addUserMarginBottom
+            }
+            binding.recyclerView.updatePadding(bottom = systemBottom)
+
+            return@setOnApplyWindowInsetsListener windowInsets
         }
     }
 

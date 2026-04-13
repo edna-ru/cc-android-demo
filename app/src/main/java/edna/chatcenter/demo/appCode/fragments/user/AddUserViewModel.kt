@@ -1,9 +1,7 @@
 package edna.chatcenter.demo.appCode.fragments.user
 
 import android.app.Activity
-import android.os.Build
 import android.os.Bundle
-import android.os.Parcelable
 import android.text.Editable
 import android.view.View
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -15,8 +13,8 @@ import androidx.navigation.findNavController
 import edna.chatcenter.demo.R
 import edna.chatcenter.demo.appCode.business.AfterTextChangedTextWatcher
 import edna.chatcenter.demo.appCode.business.StringsProvider
+import edna.chatcenter.demo.appCode.extensions.getCompatParcelable
 import edna.chatcenter.demo.appCode.models.UserInfo
-import org.parceler.Parcels
 
 class AddUserViewModel(
     private val stringsProvider: StringsProvider
@@ -32,12 +30,7 @@ class AddUserViewModel(
 
     fun initData(arguments: Bundle?) {
         if (arguments != null && arguments.containsKey(UserListFragment.USER_KEY)) {
-            val user: UserInfo? = if (Build.VERSION.SDK_INT >= 33) {
-                Parcels.unwrap(arguments.getParcelable(UserListFragment.USER_KEY, Parcelable::class.java))
-            } else {
-                @Suppress("DEPRECATION")
-                Parcels.unwrap(arguments.getParcelable(UserListFragment.USER_KEY))
-            }
+            val user: UserInfo? = arguments.getCompatParcelable(UserListFragment.USER_KEY)
             if (user != null) {
                 srcUser = user
                 _userLiveData.value = user.clone()
@@ -49,11 +42,11 @@ class AddUserViewModel(
         val navigationController: NavController =
             (view.context as Activity).findNavController(R.id.nav_host_fragment_content_main)
         when (view.id) {
-            R.id.backButton -> navigationController.navigate(R.id.action_AddUserFragment_to_UserListFragment)
+            R.id.backButton -> navigationController.navigateUp()
             R.id.okButton -> {
                 if (userLiveData.value?.isAllFieldsFilled() == true) {
                     finalUserLiveData.postValue(userLiveData.value)
-                    navigationController.navigate(R.id.action_AddUserFragment_to_UserListFragment)
+                    navigationController.navigateUp()
                 } else {
                     setupErrorFields(userLiveData.value)
                 }

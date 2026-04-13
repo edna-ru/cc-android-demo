@@ -7,9 +7,15 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.marginBottom
+import androidx.core.view.marginTop
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.clearFragmentResultListener
 import androidx.fragment.app.setFragmentResultListener
 import edna.chatcenter.core.models.enums.ChatApiVersion
@@ -28,6 +34,7 @@ class LaunchFragment : BaseAppFragment<FragmentLaunchBinding>(FragmentLaunchBind
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.provideApplication(context?.applicationContext as? EdnaChatCenterApplication)
+        setupInsets(view)
         subscribeForData()
         initReceivers()
         initObservers()
@@ -41,6 +48,35 @@ class LaunchFragment : BaseAppFragment<FragmentLaunchBinding>(FragmentLaunchBind
         unregisterReceiver()
         clearResultListeners()
         unregisterReceivers()
+    }
+
+    override fun needHandleInsets(): Boolean {
+        return false
+    }
+
+    override fun needDarkStatusBar(): Boolean {
+        return true
+    }
+
+    private fun setupInsets(view: View) {
+        val logoMarginTop = binding?.get()?.logo?.marginTop ?: 0
+        val aboutMarginBottom = binding?.get()?.about?.marginBottom ?: 0
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, windowInsets ->
+            val systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val systemTop = systemBars.top
+            binding?.get()?.settingsButton?.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                topMargin = systemTop
+            }
+            binding?.get()?.logo?.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                topMargin = systemTop + logoMarginTop
+            }
+            binding?.get()?.about?.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = systemBars.bottom + aboutMarginBottom
+            }
+
+            return@setOnApplyWindowInsetsListener windowInsets
+        }
     }
 
     private fun unregisterReceivers() {
@@ -158,7 +194,6 @@ class LaunchFragment : BaseAppFragment<FragmentLaunchBinding>(FragmentLaunchBind
 
     fun onThreadsLibInitialized() {
         setBarsColor()
-        viewModel.checkUiTheme()
         unregisterInitLibReceivers()
     }
 

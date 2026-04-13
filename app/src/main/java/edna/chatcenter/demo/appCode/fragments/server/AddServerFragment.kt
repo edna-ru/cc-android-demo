@@ -8,7 +8,6 @@ import edna.chatcenter.demo.appCode.fragments.server.ServerListFragment.Companio
 import edna.chatcenter.demo.appCode.fragments.server.ServerListFragment.Companion.SRC_SERVER_NAME_KEY
 import edna.chatcenter.demo.databinding.FragmentAddServerBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.parceler.Parcels
 
 class AddServerFragment : BaseAppFragment<FragmentAddServerBinding>(FragmentAddServerBinding::inflate) {
 
@@ -23,6 +22,10 @@ class AddServerFragment : BaseAppFragment<FragmentAddServerBinding>(FragmentAddS
         viewModel.initData(arguments)
     }
 
+    override fun navigateUp() {
+        getBinding()?.backButton?.let { viewModel.click(it) }
+    }
+
     private fun subscribeForTextWatchers() = getBinding()?.apply {
         name.setTextChangedListener(viewModel.nameTextWatcher)
         appMarker.setTextChangedListener(viewModel.appMarkerTextWatcher)
@@ -35,7 +38,7 @@ class AddServerFragment : BaseAppFragment<FragmentAddServerBinding>(FragmentAddS
     private fun subscribeForData() = getBinding()?.apply {
         viewModel.finalServerConfigLiveData.observe(viewLifecycleOwner) {
             val args = Bundle()
-            args.putParcelable(SERVER_CONFIG_KEY, Parcels.wrap(it))
+            args.putParcelable(SERVER_CONFIG_KEY, it)
             viewModel.srcServerConfig?.name?.let { name ->
                 args.putString(SRC_SERVER_NAME_KEY, name)
             }

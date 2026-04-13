@@ -8,7 +8,6 @@ import edna.chatcenter.demo.appCode.fragments.user.UserListFragment.Companion.SR
 import edna.chatcenter.demo.appCode.fragments.user.UserListFragment.Companion.USER_KEY
 import edna.chatcenter.demo.databinding.FragmentAddUserBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.parceler.Parcels
 
 class AddUserFragment : BaseAppFragment<FragmentAddUserBinding>(FragmentAddUserBinding::inflate) {
 
@@ -21,6 +20,10 @@ class AddUserFragment : BaseAppFragment<FragmentAddUserBinding>(FragmentAddUserB
         subscribeForTextWatchers()
         subscribeForData()
         initData()
+    }
+
+    override fun navigateUp() {
+        getBinding()?.backButton?.let { viewModel.click(it) }
     }
 
     private fun subscribeForTextWatchers() = getBinding()?.apply {
@@ -39,7 +42,7 @@ class AddUserFragment : BaseAppFragment<FragmentAddUserBinding>(FragmentAddUserB
     private fun subscribeForData() = getBinding()?.apply {
         viewModel.finalUserLiveData.observe(viewLifecycleOwner) {
             val args = Bundle()
-            args.putParcelable(USER_KEY, Parcels.wrap(it))
+            args.putParcelable(USER_KEY, it)
             viewModel.srcUser?.let { user ->
                 args.putString(SRC_USER_ID_KEY, user.userId)
             }

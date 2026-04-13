@@ -1,10 +1,19 @@
 package edna.chatcenter.demo.appCode.fragments
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.marginTop
+import androidx.core.view.updateLayoutParams
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import edna.chatcenter.demo.R
 import edna.chatcenter.demo.appCode.activity.ModalChatActivity
@@ -13,8 +22,6 @@ import edna.chatcenter.demo.appCode.business.ServersProvider
 import edna.chatcenter.demo.appCode.business.UiThemeProvider
 import edna.chatcenter.demo.databinding.FragmentStartChatBinding
 import edna.chatcenter.demo.integrationCode.EdnaChatCenterApplication
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.java.KoinJavaComponent
@@ -28,6 +35,7 @@ class StartChatFragment() :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupInsets(view)
         initListeners()
         initUnreadCounter()
     }
@@ -36,6 +44,42 @@ class StartChatFragment() :
         super.onResume()
         initData()
         initView()
+    }
+
+    override fun needHandleInsets(): Boolean {
+        return false
+    }
+
+    override fun needDarkStatusBar(): Boolean {
+        return true
+    }
+
+    private fun setupInsets(view: View) {
+        val logoOriginalMarginTop = binding?.get()?.logo?.marginTop ?: 0
+
+        val applyInsets = { windowInsets: WindowInsetsCompat ->
+            val systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            binding?.get()?.logo?.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                topMargin = systemBars.top + logoOriginalMarginTop
+            }
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, windowInsets ->
+            applyInsets(windowInsets)
+            windowInsets
+        }
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            val attachStateChangeListener = object : View.OnAttachStateChangeListener {
+                override fun onViewAttachedToWindow(attachedView: View) {
+                    attachedView.removeOnAttachStateChangeListener(this)
+                    ViewCompat.getRootWindowInsets(attachedView)?.let(applyInsets)
+                }
+
+                override fun onViewDetachedFromWindow(v: View) {}
+            }
+            view.addOnAttachStateChangeListener(attachStateChangeListener)
+        }
     }
 
     private fun initListeners() = getBinding()?.apply {
@@ -56,15 +100,18 @@ class StartChatFragment() :
 
     private fun initUnreadCounter() {
         val application = context?.applicationContext as? EdnaChatCenterApplication
-        CoroutineScope(Dispatchers.Main).launch {
-            application?.unreadCountMessagesFlow?.collect { count ->
-                if (count == 0U) {
-                    getBinding()?.unreadCountTextView?.visibility = View.GONE
-                } else {
-                    val text = "${context?.getString(R.string.unread_messages_count)}: $count"
 
-                    getBinding()?.unreadCountTextView?.visibility = View.VISIBLE
-                    getBinding()?.unreadCountTextView?.text = text
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                application?.unreadCountMessagesFlow?.collect { count ->
+                    if (count == 0U) {
+                        getBinding()?.unreadCountTextView?.visibility = View.GONE
+                    } else {
+                        val text = "${context?.getString(R.string.unread_messages_count)}: $count"
+
+                        getBinding()?.unreadCountTextView?.visibility = View.VISIBLE
+                        getBinding()?.unreadCountTextView?.text = text
+                    }
                 }
             }
         }

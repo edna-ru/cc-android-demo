@@ -2,7 +2,13 @@ package edna.chatcenter.demo.appCode.fragments.user
 
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.marginBottom
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.fragment.app.clearFragmentResultListener
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
@@ -19,7 +25,6 @@ import edna.chatcenter.demo.integrationCode.fragments.launch.LaunchFragment.Comp
 import edna.chatcenter.ui.visual.utils.EdnaColors
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.parceler.Parcels
 import java.lang.ref.WeakReference
 
 class UserListFragment :
@@ -33,6 +38,7 @@ class UserListFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
+        setupInsets(view)
         setResultListeners()
         subscribeToGlobalBackClick()
         createAdapter()
@@ -55,7 +61,7 @@ class UserListFragment :
     override fun onClick(position: Int) {
         val item = adapter?.get()?.getItem(position)
         val args = Bundle()
-        args.putParcelable(SELECTED_USER_KEY, Parcels.wrap(item))
+        args.putParcelable(SELECTED_USER_KEY, item)
         setFragmentResult(SELECTED_USER_KEY, args)
         viewModel.backToLaunchScreen(activity)
     }
@@ -64,12 +70,16 @@ class UserListFragment :
         val item = adapter?.get()?.getItem(position)
         val navigationController = activity?.findNavController(R.id.nav_host_fragment_content_main)
         val args = Bundle()
-        args.putParcelable(USER_KEY, Parcels.wrap(item))
+        args.putParcelable(USER_KEY, item)
         navigationController?.navigate(R.id.action_UserListFragment_to_AddUserFragment, args)
     }
 
     override fun onRemoveItem(position: Int) {
         adapter?.get()?.getItem(position)?.let { viewModel.removeUser(it) }
+    }
+
+    override fun needHandleInsets(): Boolean {
+        return false
     }
 
     private fun initView() = getBinding()?.apply {
@@ -81,6 +91,23 @@ class UserListFragment :
         } else {
             EdnaColors.setTint(activity, addUser, R.color.white_color_fa)
             addUser.setBackgroundResource(R.drawable.buttons_bg_selector)
+        }
+    }
+
+    private fun setupInsets(view: View) {
+        val binding = this@UserListFragment.binding?.get() ?: return
+        val addUserMarginBottom = binding.addUser.marginBottom
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, windowInsets ->
+            val systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val systemBottom = systemBars.bottom
+            binding.toolbar.updatePadding(top = systemBars.top)
+            binding.addUser.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = systemBottom + addUserMarginBottom
+            }
+            binding.recyclerView.updatePadding(bottom = systemBottom)
+
+            return@setOnApplyWindowInsetsListener windowInsets
         }
     }
 

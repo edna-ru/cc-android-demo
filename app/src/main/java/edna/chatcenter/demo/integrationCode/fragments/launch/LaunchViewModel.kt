@@ -1,14 +1,8 @@
 package edna.chatcenter.demo.integrationCode.fragments.launch
 
 import android.app.Activity
-import android.os.Build
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.View
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
-import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
@@ -24,22 +18,17 @@ import edna.chatcenter.demo.R
 import edna.chatcenter.demo.appCode.business.PreferencesProvider
 import edna.chatcenter.demo.appCode.business.ServersProvider
 import edna.chatcenter.demo.appCode.business.jsonStringToMap
+import edna.chatcenter.demo.appCode.extensions.getCompatParcelable
 import edna.chatcenter.demo.appCode.models.ServerConfig
 import edna.chatcenter.demo.appCode.models.TestData
 import edna.chatcenter.demo.appCode.models.UserInfo
 import edna.chatcenter.demo.integrationCode.EdnaChatCenterApplication
 import edna.chatcenter.ui.visual.ChatConfig
-import edna.chatcenter.ui.visual.uiStyle.CurrentUiTheme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import org.parceler.Parcels
 
 class LaunchViewModel(
     private val preferences: PreferencesProvider,
     private val serversProvider: ServersProvider
 ) : ViewModel(), DefaultLifecycleObserver {
-    private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     private var testConfig: ChatConfig? = null
 
@@ -79,7 +68,6 @@ class LaunchViewModel(
     override fun onStart(owner: LifecycleOwner) {
         super.onStart(owner)
         preferences.resetDemoMode()
-        checkUiTheme()
     }
 
     fun click(view: View) {
@@ -150,40 +138,18 @@ class LaunchViewModel(
         )
     }
 
-    private fun applyCurrentUiTheme(currentUiTheme: CurrentUiTheme) {
-        coroutineScope.launch(Dispatchers.Main) {
-            when (currentUiTheme) {
-                CurrentUiTheme.SYSTEM -> AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_FOLLOW_SYSTEM)
-                CurrentUiTheme.LIGHT -> AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO)
-                CurrentUiTheme.DARK -> AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES)
-            }
-        }
-    }
-
-    internal fun checkUiTheme() {
-        if (application?.chatCenterUI != null) {
-            applyCurrentUiTheme(CurrentUiTheme.SYSTEM)
-        }
-    }
-
     fun callFragmentResultListener(key: String, bundle: Bundle) {
         if (key == LaunchFragment.SELECTED_USER_KEY && bundle.containsKey(LaunchFragment.SELECTED_USER_KEY)) {
-            val user: UserInfo? = if (Build.VERSION.SDK_INT >= 33) {
-                Parcels.unwrap(bundle.getParcelable(LaunchFragment.SELECTED_USER_KEY, Parcelable::class.java))
-            } else {
-                Parcels.unwrap(bundle.getParcelable(LaunchFragment.SELECTED_USER_KEY))
-            }
+            val user: UserInfo? = bundle.getCompatParcelable(LaunchFragment.SELECTED_USER_KEY)
             if (user != null && user.isAllFieldsFilled()) {
                 _selectedUserLiveData.postValue(user)
                 preferences.saveSelectedUser(user)
             }
         }
         if (key == LaunchFragment.SELECTED_SERVER_CONFIG_KEY && bundle.containsKey(LaunchFragment.SELECTED_SERVER_CONFIG_KEY)) {
-            var server: ServerConfig? = if (Build.VERSION.SDK_INT >= 33) {
-                Parcels.unwrap(bundle.getParcelable(LaunchFragment.SELECTED_SERVER_CONFIG_KEY, Parcelable::class.java))
-            } else {
-                Parcels.unwrap(bundle.getParcelable(LaunchFragment.SELECTED_SERVER_CONFIG_KEY))
-            }
+            var server: ServerConfig? = bundle.getCompatParcelable(
+                LaunchFragment.SELECTED_SERVER_CONFIG_KEY
+            )
             if (server == null || !server.isAllFieldsFilled()) {
                 server = serversProvider.getSelectedServer()
             }

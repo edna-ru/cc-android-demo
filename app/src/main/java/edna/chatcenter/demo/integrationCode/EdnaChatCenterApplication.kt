@@ -1,10 +1,13 @@
 package edna.chatcenter.demo.integrationCode
 
 import android.app.Application
-import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.edit
 import com.google.firebase.messaging.FirebaseMessaging
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
@@ -24,6 +27,7 @@ import edna.chatcenter.demo.appCode.business.PreferencesProvider
 import edna.chatcenter.demo.appCode.business.ServersProvider
 import edna.chatcenter.demo.appCode.business.appModule
 import edna.chatcenter.demo.appCode.fragments.log.LogViewModel
+import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyAppDayNightTheme
 import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyAsyncInit
 import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyKeepWebSocket
 import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyKeepWebSocketDuringSession
@@ -61,6 +65,9 @@ class EdnaChatCenterApplication : Application() {
 
     private val serversProvider: ServersProvider by inject()
     private val preferences: PreferencesProvider by inject()
+    private val settingsPreferences: SharedPreferences by lazy {
+        getSharedPreferences(settingsPreferencesName, MODE_PRIVATE)
+    }
 
     var chatCenterUI: ChatCenterUI? = null
     var isSdkInitializing = false
@@ -69,6 +76,8 @@ class EdnaChatCenterApplication : Application() {
     val unreadCountMessagesFlow = MutableStateFlow(0U)
 
     override fun onCreate() {
+        setupAppDayNightMode()
+
         super.onCreate()
         startAppCenter()
 
@@ -270,6 +279,14 @@ class EdnaChatCenterApplication : Application() {
                 imageResId = edna.chatcenter.ui.R.drawable.ecc_voice_message_play,
                 tintColor = R.color.dark_main
             )
+            chatFlow.systemMessages = chatFlow.systemMessages.copy(
+                scheduleMessage = chatFlow.systemMessages.scheduleMessage.copy(
+                    textColor = R.color.white_color
+                ),
+                scheduleIconContainer = chatFlow.systemMessages.scheduleIconContainer.copy(
+                    backgroundColor = R.color.dark_incoming_bubble
+                )
+            )
         }
         chatDarkTheme = ChatTheme(darkFlows) // создайте инстанс, переопределив точечно нужные элементы
     }
@@ -321,7 +338,6 @@ class EdnaChatCenterApplication : Application() {
             SSLPinningConfig(certificates, server.allowUntrustedSSLCertificate)
         )
 
-        val settingsPreferences = getSharedPreferences(settingsPreferencesName, Context.MODE_PRIVATE)
         val isSearchEnabled = settingsPreferences.getBoolean(settingsKeySearch, true)
         val isLinkPreviewEnabled = settingsPreferences.getBoolean(settingsKeyOpenGraph, true)
         val isVoiceRecordingEnabled = settingsPreferences.getBoolean(settingsKeyVoiceMessages, true)
@@ -373,6 +389,21 @@ class EdnaChatCenterApplication : Application() {
                 isSdkInitializing = false
                 onInitComplete(false)
             }
+        }
+    }
+
+    private fun setupAppDayNightMode() {
+        val defaultMode = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            AppCompatDelegate.MODE_NIGHT_NO
+        } else {
+            AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        }
+
+        val dayNightMode = settingsPreferences.getInt(settingsKeyAppDayNightTheme, defaultMode)
+        AppCompatDelegate.setDefaultNightMode(dayNightMode)
+
+        if (defaultMode == dayNightMode) {
+            settingsPreferences.edit { putInt(settingsKeyAppDayNightTheme, dayNightMode) }
         }
     }
 

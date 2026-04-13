@@ -5,9 +5,14 @@ import android.graphics.drawable.StateListDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.Insets
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
@@ -27,14 +32,55 @@ class ChatAppFragment : BaseAppFragment<FragmentChatBinding>(FragmentChatBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        subscribeToGlobalBackClick()
+        setupInsets(view)
         initTabs()
         subscribeToGlobalBackClick()
     }
 
+    override fun needHandleInsets(): Boolean {
+        return false
+    }
+
+    private fun setupInsets(view: View) {
+        val tabLayout = binding?.get()?.tabLayout ?: return
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, windowInsets ->
+            val systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val ime = windowInsets.getInsets(WindowInsetsCompat.Type.ime())
+            val systemBarsBottom = systemBars.bottom
+
+            tabLayout.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = systemBarsBottom
+            }
+
+            val updatedSystemBars = Insets.of(
+                /* left = */ systemBars.left,
+                /* top = */ systemBars.top,
+                /* right = */ systemBars.right,
+                /* bottom = */ 0
+            )
+
+            /* Необходимо вычесть из IME высоту, всего что родитель поглотил снизу:
+            * в данном случае это системный navigation bar и tabLayout
+            * Передача WindowInsets типа IME работает только для API >= 30 */
+            val updatedImeBottom = maxOf(0, ime.bottom - systemBarsBottom - tabLayout.height)
+            val updatedIme = Insets.of(
+                /* left = */ ime.left,
+                /* top = */ ime.top,
+                /* right = */ ime.right,
+                /* bottom = */ updatedImeBottom
+            )
+
+            return@setOnApplyWindowInsetsListener WindowInsetsCompat.Builder(windowInsets)
+                .setInsets(WindowInsetsCompat.Type.systemBars(), updatedSystemBars)
+                .setInsets(WindowInsetsCompat.Type.ime(), updatedIme)
+                .build()
+        }
+    }
+
     private fun initTabs() = getBinding()?.apply {
         viewPager.isUserInputEnabled = false
-        viewPager.adapter = TabAdapter(requireActivity().supportFragmentManager, lifecycle)
+        viewPager.adapter = TabAdapter(childFragmentManager, lifecycle)
         TabLayoutMediator(tabLayout, viewPager) { _, _ -> }.attach()
 
         for (i in 0 until tabLayout.tabCount) {

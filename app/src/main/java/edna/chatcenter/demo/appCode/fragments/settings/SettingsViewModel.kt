@@ -3,10 +3,10 @@ package edna.chatcenter.demo.appCode.fragments.settings
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.core.content.edit
 
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -30,6 +30,9 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     private val _keepWebSocketEnabledDuringSession = MutableLiveData(sharedPreferences.getBoolean(settingsKeyKeepWebSocketDuringSession, false))
     val keepWebSocketEnabledDuringSession: LiveData<Boolean> = _keepWebSocketEnabledDuringSession
+
+    private val _appDayNightTheme = MutableLiveData(sharedPreferences.getInt(settingsKeyAppDayNightTheme, -1))
+    val appDayNightMode: LiveData<Int> = _appDayNightTheme
 
     fun setAsyncInitEnabled(enabled: Boolean) {
         _asyncInitEnabled.value = enabled
@@ -60,6 +63,11 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         _keepWebSocketEnabledDuringSession.value = enabled
         sharedPreferences.edit { putBoolean(settingsKeyKeepWebSocketDuringSession, enabled) }
     }
+
+    fun setAppDayNightTheme(mode: Int) {
+        _appDayNightTheme.value = mode
+        sharedPreferences.edit { putInt(settingsKeyAppDayNightTheme, mode) }
+    }
 }
 
 const val settingsPreferencesName: String = "sdk_settings"
@@ -69,3 +77,4 @@ const val settingsKeyVoiceMessages: String = "sdk_voice_messages_enabled"
 const val settingsKeyOpenGraph: String = "sdk_opengraph_enabled"
 const val settingsKeyKeepWebSocket: String = "sdk_keep_websocket_enabled"
 const val settingsKeyKeepWebSocketDuringSession: String = "sdk_keep_websocket_enabled_during_session"
+const val settingsKeyAppDayNightTheme: String = "sdk_app_day_night_theme"

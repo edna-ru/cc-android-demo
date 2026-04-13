@@ -2,9 +2,7 @@ package edna.chatcenter.demo.appCode.fragments.user
 
 import android.app.Activity
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.View
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LiveData
@@ -14,12 +12,12 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import edna.chatcenter.demo.R
 import edna.chatcenter.demo.appCode.business.PreferencesProvider
+import edna.chatcenter.demo.appCode.extensions.getCompatParcelable
 import edna.chatcenter.demo.appCode.fragments.user.UserListFragment.Companion.SRC_USER_ID_KEY
 import edna.chatcenter.demo.appCode.models.UserInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.parceler.Parcels
 
 class UserListViewModel(
     private val preferencesProvider: PreferencesProvider
@@ -47,7 +45,7 @@ class UserListViewModel(
         if (context != null) {
             val navigationController: NavController =
                 (context as Activity).findNavController(R.id.nav_host_fragment_content_main)
-            navigationController.navigate(R.id.action_UserListFragment_to_LaunchFragment)
+            navigationController.navigateUp()
         }
     }
 
@@ -106,16 +104,7 @@ class UserListViewModel(
 
     fun callFragmentResultListener(key: String, bundle: Bundle) {
         if (key == UserListFragment.USER_KEY && bundle.containsKey(UserListFragment.USER_KEY)) {
-            val user: UserInfo? = if (Build.VERSION.SDK_INT >= 33) {
-                Parcels.unwrap(
-                    bundle.getParcelable(
-                        UserListFragment.USER_KEY,
-                        Parcelable::class.java
-                    )
-                )
-            } else {
-                Parcels.unwrap(bundle.getParcelable(UserListFragment.USER_KEY))
-            }
+            val user: UserInfo? = bundle.getCompatParcelable(UserListFragment.USER_KEY)
             if (user != null) {
                 if (bundle.containsKey(SRC_USER_ID_KEY)) {
                     val userId = bundle.getString(SRC_USER_ID_KEY)

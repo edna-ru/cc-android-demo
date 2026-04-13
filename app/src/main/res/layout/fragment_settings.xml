@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="?android:colorBackground">
+    android:background="?android:colorBackground"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/toolbar_height"
+        android:layout_height="wrap_content"
         android:background="@color/black_color"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -24,6 +23,7 @@
             android:layout_gravity="center"
             android:layout_marginStart="@dimen/margin_8"
             android:layout_marginEnd="@dimen/margin_8"
+            android:layout_marginVertical="@dimen/margin_12"
             android:padding="@dimen/margin_12"
             android:src="@drawable/ic_back" />
 
@@ -44,25 +44,31 @@
         android:id="@+id/titleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/sdk_settings"
-        android:textSize="14sp"
         android:layout_marginStart="38dp"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/sdk_settings"
         android:textAllCaps="true"
         android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="14sp"
         android:textStyle="bold"
-        android:layout_marginBottom="8dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/sdk_settings_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
         android:layout_marginHorizontal="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="4dp"
         app:cardCornerRadius="12dp"
         app:cardUseCompatPadding="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleTextView">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -72,96 +78,142 @@
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/asyncInitSwitcher"
+                style="@style/SwitchStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textOn=""
-                android:textOff=""
                 android:padding="8dp"
                 android:text="@string/async_init"
-                style="@style/SwitchStyle"/>
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textOff=""
+                android:textOn="" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#D3D4D5"/>
+                android:background="#D3D4D5" />
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/searchSwitcher"
+                style="@style/SwitchStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textOn=""
-                android:textOff=""
                 android:padding="8dp"
                 android:text="@string/search"
-                style="@style/SwitchStyle"/>
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textOff=""
+                android:textOn="" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#D3D4D5"/>
+                android:background="#D3D4D5" />
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/voiceSwitcher"
+                style="@style/SwitchStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:padding="8dp"
-                android:textOn=""
-                android:textOff=""
                 android:text="@string/voice_messages"
-                style="@style/SwitchStyle"/>
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textOff=""
+                android:textOn="" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#D3D4D5"/>
+                android:background="#D3D4D5" />
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/openGraphSwitcher"
+                style="@style/SwitchStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="8dp"
                 android:text="@string/opengraph"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textOn=""
                 android:textOff=""
-                android:padding="8dp"
-                style="@style/SwitchStyle"/>
+                android:textOn="" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#D3D4D5"/>
+                android:background="#D3D4D5" />
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/webSocketSwitcher"
+                style="@style/SwitchStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="8dp"
                 android:text="@string/keep_websocket"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textOn=""
                 android:textOff=""
-                android:padding="8dp"
-                style="@style/SwitchStyle"/>
+                android:textOn="" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#D3D4D5"/>
+                android:background="#D3D4D5" />
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/webSocketDuringSessionSwitcher"
+                style="@style/SwitchStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="8dp"
                 android:text="@string/keep_websocket_during_session"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textOn=""
                 android:textOff=""
-                android:padding="8dp"
-                style="@style/SwitchStyle"/>
+                android:textOn="" />
 
         </LinearLayout>
+
     </com.google.android.material.card.MaterialCardView>
 
-</LinearLayout>
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/app_theme_title_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="8dp"
+        android:layout_marginStart="38dp"
+        android:text="@string/app_theme_settings"
+        android:textAllCaps="true"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sdk_settings_card" />
+
+    <RadioGroup
+        android:id="@+id/dayNightModeRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/app_theme_title_text">
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/dayModeRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/light_theme" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/nightModeRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dark_theme" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/followSystemModeRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/follow_system_theme" />
+
+    </RadioGroup>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

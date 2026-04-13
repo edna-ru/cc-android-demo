@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.View
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LiveData
@@ -12,15 +11,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import edna.chatcenter.demo.BuildConfig
 import edna.chatcenter.demo.R
 import edna.chatcenter.demo.appCode.business.PreferencesProvider
 import edna.chatcenter.demo.appCode.business.ServersProvider
+import edna.chatcenter.demo.appCode.extensions.getCompatParcelable
 import edna.chatcenter.demo.appCode.models.ServerConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.parceler.Parcels
 
 class ServerListViewModel(
     private val preferencesProvider: PreferencesProvider,
@@ -35,7 +33,7 @@ class ServerListViewModel(
         val navigationController: NavController =
             (view.context as Activity).findNavController(R.id.nav_host_fragment_content_main)
         when (view.id) {
-            R.id.backButton -> navigationController.navigate(R.id.action_ServersFragment_to_LaunchFragment)
+            R.id.backButton -> navigationController.navigateUp()
             R.id.addServer -> {
                 navigationController.navigate(R.id.action_ServerListFragment_to_AddServerFragment)
             }
@@ -46,7 +44,7 @@ class ServerListViewModel(
         if (context != null) {
             val navigationController: NavController =
                 (context as Activity).findNavController(R.id.nav_host_fragment_content_main)
-            navigationController.navigate(R.id.action_ServersFragment_to_LaunchFragment)
+            navigationController.navigateUp()
         }
     }
 
@@ -80,16 +78,9 @@ class ServerListViewModel(
 
     fun callFragmentResultListener(key: String, bundle: Bundle) {
         if (key == ServerListFragment.SERVER_CONFIG_KEY && bundle.containsKey(ServerListFragment.SERVER_CONFIG_KEY)) {
-            val config: ServerConfig? = if (Build.VERSION.SDK_INT >= 33) {
-                Parcels.unwrap(
-                    bundle.getParcelable(
-                        ServerListFragment.SERVER_CONFIG_KEY,
-                        Parcelable::class.java
-                    )
-                )
-            } else {
-                Parcels.unwrap(bundle.getParcelable(ServerListFragment.SERVER_CONFIG_KEY))
-            }
+            val config: ServerConfig? = bundle.getCompatParcelable(
+                ServerListFragment.SERVER_CONFIG_KEY
+            )
 
             if (config != null) {
                 if (bundle.containsKey(ServerListFragment.SRC_SERVER_NAME_KEY)) {

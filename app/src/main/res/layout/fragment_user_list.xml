@@ -7,8 +7,8 @@
 
     <LinearLayout
         android:id="@+id/toolbar"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/toolbar_height"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/black_color"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -20,6 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginVertical="@dimen/margin_12"
             android:layout_marginStart="@dimen/margin_8"
             android:layout_marginEnd="@dimen/margin_8"
             android:contentDescription="@string/content_description_back_button"

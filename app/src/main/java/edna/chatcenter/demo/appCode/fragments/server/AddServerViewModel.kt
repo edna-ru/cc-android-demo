@@ -1,9 +1,7 @@
 package edna.chatcenter.demo.appCode.fragments.server
 
 import android.app.Activity
-import android.os.Build
 import android.os.Bundle
-import android.os.Parcelable
 import android.text.Editable
 import android.view.View
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -15,8 +13,8 @@ import androidx.navigation.findNavController
 import edna.chatcenter.demo.R
 import edna.chatcenter.demo.appCode.business.AfterTextChangedTextWatcher
 import edna.chatcenter.demo.appCode.business.StringsProvider
+import edna.chatcenter.demo.appCode.extensions.getCompatParcelable
 import edna.chatcenter.demo.appCode.models.ServerConfig
-import org.parceler.Parcels
 
 class AddServerViewModel(
     private val stringsProvider: StringsProvider
@@ -50,11 +48,11 @@ class AddServerViewModel(
         val navigationController: NavController =
             (view.context as Activity).findNavController(R.id.nav_host_fragment_content_main)
         when (view.id) {
-            R.id.backButton -> navigationController.navigate(R.id.action_AddServerFragment_to_ServerListFragment)
+            R.id.backButton -> navigationController.navigateUp()
             R.id.okButton -> {
                 if (serverConfigLiveData.value?.isAllFieldsFilled() == true) {
                     finalServerConfigLiveData.value = serverConfigLiveData.value
-                    navigationController.navigate(R.id.action_AddServerFragment_to_ServerListFragment)
+                    navigationController.navigateUp()
                 } else {
                     setupErrorFields(serverConfigLiveData.value)
                 }
@@ -64,16 +62,9 @@ class AddServerViewModel(
 
     fun initData(arguments: Bundle?) {
         if (arguments != null && arguments.containsKey(ServerListFragment.SERVER_CONFIG_KEY)) {
-            val config: ServerConfig? = if (Build.VERSION.SDK_INT >= 33) {
-                Parcels.unwrap(
-                    arguments.getParcelable(
-                        ServerListFragment.SERVER_CONFIG_KEY,
-                        Parcelable::class.java
-                    )
-                )
-            } else {
-                Parcels.unwrap(arguments.getParcelable(ServerListFragment.SERVER_CONFIG_KEY))
-            }
+            val config: ServerConfig? = arguments.getCompatParcelable(
+                ServerListFragment.SERVER_CONFIG_KEY
+            )
             setSrcConfig(config)
         }
     }

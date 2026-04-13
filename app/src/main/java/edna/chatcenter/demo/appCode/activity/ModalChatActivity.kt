@@ -1,7 +1,9 @@
 package edna.chatcenter.demo.appCode.activity
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import edna.chatcenter.demo.R
 import edna.chatcenter.demo.integrationCode.EdnaChatCenterApplication
@@ -12,6 +14,10 @@ class ModalChatActivity : AppCompatActivity() {
 
     @SuppressLint("CommitTransaction")
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            enableEdgeToEdge()
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_modal_chat)
 

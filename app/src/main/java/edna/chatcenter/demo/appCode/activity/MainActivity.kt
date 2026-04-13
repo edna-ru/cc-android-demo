@@ -1,6 +1,8 @@
 package edna.chatcenter.demo.appCode.activity
 
+import android.os.Build
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -14,6 +16,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // TODO: Во всем демо приложении и SDK необходимо настроить WindowInsets
+        //  сейчас это сделано только для Android 15+
+        //  В SDK необходимо добавить гибкую настройку WindowInsets, что бы у интегратора
+        //  была возможность включения/отключения
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            enableEdgeToEdge()
+        }
+
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

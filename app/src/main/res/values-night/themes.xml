@@ -7,4 +7,14 @@
         <item name="colorSecondaryVariant">@color/blue_color</item>
         <item name="colorOnSecondary">@color/gray_color_b7</item>
     </style>
+
+    <style name="SwitchStyle" parent="Widget.MaterialComponents.CompoundButton.Switch">
+        <item name="thumbTint">@color/gray_color_b7</item>
+        <item name="trackTint">@color/gray_color</item>
+    </style>
+
+    <style name="SettingsButton">
+        <item name="tint">@color/gray_color_b7</item>
+    </style>
+
 </resources>
