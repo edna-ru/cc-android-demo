@@ -45,6 +45,12 @@ class SettingsFragment : BaseAppFragment<FragmentSettingsBinding>(FragmentSettin
         viewModel.keepWebSocketEnabledDuringSession.observe(viewLifecycleOwner) { isEnabled ->
             webSocketDuringSessionSwitcher.isChecked = isEnabled
         }
+        viewModel.webSocketReconnectEnabled.observe(viewLifecycleOwner) { isEnabled ->
+            webSocketReconnectSwitcher.isChecked = isEnabled
+        }
+        viewModel.isSdkInitDelayEnabled.observe(viewLifecycleOwner) { isEnabled ->
+            sdkInitDelaySwitcher.isChecked = isEnabled
+        }
 
         asyncInitSwitcher.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setAsyncInitEnabled(isChecked)
@@ -63,6 +69,12 @@ class SettingsFragment : BaseAppFragment<FragmentSettingsBinding>(FragmentSettin
         }
         webSocketDuringSessionSwitcher.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setKeepWebSocketEnabledDuringSession(isChecked)
+        }
+        webSocketReconnectSwitcher.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setWebSocketReconnectEnabled(isChecked)
+        }
+        sdkInitDelaySwitcher.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setSdkInitDelayEnabled(enabled = isChecked)
         }
     }
 

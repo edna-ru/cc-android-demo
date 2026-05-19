@@ -37,6 +37,11 @@ class ChatAppFragment : BaseAppFragment<FragmentChatBinding>(FragmentChatBinding
         subscribeToGlobalBackClick()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        ChatFragment.weakInstance.clear()
+    }
+
     override fun needHandleInsets(): Boolean {
         return false
     }
@@ -161,6 +166,7 @@ class ChatAppFragment : BaseAppFragment<FragmentChatBinding>(FragmentChatBinding
             }
         }
 
+        // FIXME: TabAdapter должен сам управлять ЖЦ своих child'ов
         override fun containsItem(itemId: Long): Boolean {
             for (id in currentPageIds) if (id.toLong() == itemId) {
                 currentPageIds.remove(itemId.toString().toInt())

@@ -3,7 +3,6 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'com.huawei.agconnect'
     id 'com.google.gms.google-services'
-    id 'kotlin-kapt'
     id 'kotlin-parcelize'
     id 'com.google.firebase.firebase-perf'
     id 'com.google.firebase.crashlytics'
@@ -86,7 +85,7 @@ dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'edna.chatcenter.ui.android:release:5.20.0'
+    implementation 'edna.chatcenter.ui.android:release:5.21.0'
 
     implementation 'com.google.firebase:firebase-crashlytics:19.4.3'
     implementation "androidx.core:core-ktx:1.12.0"

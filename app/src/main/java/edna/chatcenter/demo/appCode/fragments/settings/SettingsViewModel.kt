@@ -31,6 +31,13 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     private val _keepWebSocketEnabledDuringSession = MutableLiveData(sharedPreferences.getBoolean(settingsKeyKeepWebSocketDuringSession, false))
     val keepWebSocketEnabledDuringSession: LiveData<Boolean> = _keepWebSocketEnabledDuringSession
 
+    private val _webSocketReconnectEnabled = MutableLiveData(sharedPreferences.getBoolean(settingsWebSocketReconnect, false))
+    val webSocketReconnectEnabled: LiveData<Boolean> = _webSocketReconnectEnabled
+
+    private val _isSdkInitDelayEnabled =
+        MutableLiveData(sharedPreferences.getBoolean(settingsKeySdkInitDelay, false))
+    val isSdkInitDelayEnabled: LiveData<Boolean> = _isSdkInitDelayEnabled
+
     private val _appDayNightTheme = MutableLiveData(sharedPreferences.getInt(settingsKeyAppDayNightTheme, -1))
     val appDayNightMode: LiveData<Int> = _appDayNightTheme
 
@@ -64,6 +71,16 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         sharedPreferences.edit { putBoolean(settingsKeyKeepWebSocketDuringSession, enabled) }
     }
 
+    fun setWebSocketReconnectEnabled(enabled: Boolean) {
+        _webSocketReconnectEnabled.value = enabled
+        sharedPreferences.edit { putBoolean(settingsWebSocketReconnect, enabled) }
+    }
+
+    fun setSdkInitDelayEnabled(enabled: Boolean) {
+        _isSdkInitDelayEnabled.value = enabled
+        sharedPreferences.edit { putBoolean(settingsKeySdkInitDelay, enabled) }
+    }
+
     fun setAppDayNightTheme(mode: Int) {
         _appDayNightTheme.value = mode
         sharedPreferences.edit { putInt(settingsKeyAppDayNightTheme, mode) }
@@ -78,3 +95,5 @@ const val settingsKeyOpenGraph: String = "sdk_opengraph_enabled"
 const val settingsKeyKeepWebSocket: String = "sdk_keep_websocket_enabled"
 const val settingsKeyKeepWebSocketDuringSession: String = "sdk_keep_websocket_enabled_during_session"
 const val settingsKeyAppDayNightTheme: String = "sdk_app_day_night_theme"
+const val settingsWebSocketReconnect: String = "sdk_websocket_reconnect_enabled"
+const val settingsKeySdkInitDelay: String = "sdk_init_delay_enabled"

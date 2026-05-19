@@ -32,9 +32,11 @@ import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyAsyncInit
 import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyKeepWebSocket
 import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyKeepWebSocketDuringSession
 import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyOpenGraph
+import edna.chatcenter.demo.appCode.fragments.settings.settingsKeySdkInitDelay
 import edna.chatcenter.demo.appCode.fragments.settings.settingsKeySearch
 import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyVoiceMessages
 import edna.chatcenter.demo.appCode.fragments.settings.settingsPreferencesName
+import edna.chatcenter.demo.appCode.fragments.settings.settingsWebSocketReconnect
 import edna.chatcenter.demo.appCode.models.LogModel
 import edna.chatcenter.demo.appCode.models.ServerConfig
 import edna.chatcenter.demo.appCode.push.HCMTokenRefresher
@@ -49,6 +51,8 @@ import edna.chatcenter.ui.visual.uiStyle.settings.theme.ChatColors
 import edna.chatcenter.ui.visual.uiStyle.settings.theme.ChatImages
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -62,6 +66,7 @@ class EdnaChatCenterApplication : Application() {
     private var chatLightTheme: ChatTheme? = null
     private var chatDarkTheme: ChatTheme? = null
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
+    private val mainCoroutineScope =  CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     private val serversProvider: ServersProvider by inject()
     private val preferences: PreferencesProvider by inject()
@@ -104,6 +109,40 @@ class EdnaChatCenterApplication : Application() {
                 applicationContext.sendBroadcast(intent)
             }
         }
+    }
+
+    fun initChatCenterUI(
+        serverConfig: ServerConfig? = null,
+        chatConfig: ChatConfig? = null,
+        apiVersion: ChatApiVersion = ChatApiVersion.defaultApiVersionEnum,
+        onInitComplete: (isAsyncInit: Boolean) -> Unit = {},
+    ) {
+        val isSdkInitDelayEnabled = settingsPreferences.getBoolean(settingsKeySdkInitDelay, false)
+
+        if (isSdkInitDelayEnabled) {
+            isSdkInitializing = true
+
+            mainCoroutineScope.launch {
+                delay(timeMillis = 1_000)
+
+                initializeChatCenterUI(
+                    serverConfig = serverConfig,
+                    chatConfig = chatConfig,
+                    apiVersion = apiVersion,
+                    onInitComplete = onInitComplete,
+                )
+            }
+
+            return
+        }
+
+
+        initializeChatCenterUI(
+            serverConfig = serverConfig,
+            chatConfig = chatConfig,
+            apiVersion = apiVersion,
+            onInitComplete = onInitComplete,
+        )
     }
 
     fun subscribeToUnreadMessages() {
@@ -291,13 +330,14 @@ class EdnaChatCenterApplication : Application() {
         chatDarkTheme = ChatTheme(darkFlows) // создайте инстанс, переопределив точечно нужные элементы
     }
 
-    fun initChatCenterUI(
-        serverConfig: ServerConfig? = null,
-        chatConfig: ChatConfig? = null,
-        apiVersion: ChatApiVersion = ChatApiVersion.defaultApiVersionEnum,
-        onInitComplete: (isAsyncInit: Boolean) -> Unit = {},
+    private fun initializeChatCenterUI(
+        serverConfig: ServerConfig?,
+        chatConfig: ChatConfig?,
+        apiVersion: ChatApiVersion,
+        onInitComplete: (isAsyncInit: Boolean) -> Unit,
     ) {
         isSdkInitializing = true
+
         val loggerConfig = ChatLoggerConfig(
             applicationContext,
             logFileSize = 50,
@@ -321,6 +361,8 @@ class EdnaChatCenterApplication : Application() {
                 applicationContext.getString(R.string.no_servers),
                 Toast.LENGTH_LONG
             ).show()
+
+            isSdkInitializing = false
             return
         }
 
@@ -331,10 +373,13 @@ class EdnaChatCenterApplication : Application() {
             hashMapOf(),
             apiVersion = apiVersion
         )
-        val certificates = server.trustedSSLCertificates?.map { ChatSSLCertificate(it) }?.toTypedArray() ?: arrayOf()
+        val certificates = server.trustedSSLCertificates?.map {
+            ChatSSLCertificate(it)
+        }?.toTypedArray() ?: arrayOf()
+        val isReconnectEnabled = settingsPreferences.getBoolean(settingsWebSocketReconnect, false)
         val networkConfig = ChatNetworkConfig(
             HTTPConfig(),
-            WSConfig(),
+            WSConfig(isReconnectEnabled = isReconnectEnabled, maxReconnectAttempts = 8),
             SSLPinningConfig(certificates, server.allowUntrustedSSLCertificate)
         )
 
@@ -342,7 +387,8 @@ class EdnaChatCenterApplication : Application() {
         val isLinkPreviewEnabled = settingsPreferences.getBoolean(settingsKeyOpenGraph, true)
         val isVoiceRecordingEnabled = settingsPreferences.getBoolean(settingsKeyVoiceMessages, true)
         val isKeepWebSocketActive = settingsPreferences.getBoolean(settingsKeyKeepWebSocket, false)
-        val isKeepWebSocketActiveDuringSession = settingsPreferences.getBoolean(settingsKeyKeepWebSocketDuringSession, false)
+        val isKeepWebSocketActiveDuringSession =
+            settingsPreferences.getBoolean(settingsKeyKeepWebSocketDuringSession, false)
 
         chatConfig?.apply {
             searchEnabled = isSearchEnabled
