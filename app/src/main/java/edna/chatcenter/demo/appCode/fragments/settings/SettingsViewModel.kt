@@ -38,6 +38,10 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         MutableLiveData(sharedPreferences.getBoolean(settingsKeySdkInitDelay, false))
     val isSdkInitDelayEnabled: LiveData<Boolean> = _isSdkInitDelayEnabled
 
+    private val _isSubtitleShowOrgUnitEnabled =
+        MutableLiveData(sharedPreferences.getBoolean(settingsKeySubtitleShowOrgUnit, true))
+    val isSubtitleShowOrgUnitEnabled: LiveData<Boolean> = _isSubtitleShowOrgUnitEnabled
+
     private val _appDayNightTheme = MutableLiveData(sharedPreferences.getInt(settingsKeyAppDayNightTheme, -1))
     val appDayNightMode: LiveData<Int> = _appDayNightTheme
 
@@ -81,6 +85,11 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         sharedPreferences.edit { putBoolean(settingsKeySdkInitDelay, enabled) }
     }
 
+    fun setSubtitleShowOrgUnitEnabled(enabled: Boolean) {
+        _isSubtitleShowOrgUnitEnabled.value = enabled
+        sharedPreferences.edit { putBoolean(settingsKeySubtitleShowOrgUnit, enabled) }
+    }
+
     fun setAppDayNightTheme(mode: Int) {
         _appDayNightTheme.value = mode
         sharedPreferences.edit { putInt(settingsKeyAppDayNightTheme, mode) }
@@ -97,3 +106,4 @@ const val settingsKeyKeepWebSocketDuringSession: String = "sdk_keep_websocket_en
 const val settingsKeyAppDayNightTheme: String = "sdk_app_day_night_theme"
 const val settingsWebSocketReconnect: String = "sdk_websocket_reconnect_enabled"
 const val settingsKeySdkInitDelay: String = "sdk_init_delay_enabled"
+const val settingsKeySubtitleShowOrgUnit: String = "sdk_subtitle_show_org_unit_enabled"

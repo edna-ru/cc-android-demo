@@ -51,6 +51,9 @@ class SettingsFragment : BaseAppFragment<FragmentSettingsBinding>(FragmentSettin
         viewModel.isSdkInitDelayEnabled.observe(viewLifecycleOwner) { isEnabled ->
             sdkInitDelaySwitcher.isChecked = isEnabled
         }
+        viewModel.isSubtitleShowOrgUnitEnabled.observe(viewLifecycleOwner) { isEnabled ->
+            subtitleShowOrgUnitSwitcher.isChecked = isEnabled
+        }
 
         asyncInitSwitcher.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setAsyncInitEnabled(isChecked)
@@ -74,7 +77,10 @@ class SettingsFragment : BaseAppFragment<FragmentSettingsBinding>(FragmentSettin
             viewModel.setWebSocketReconnectEnabled(isChecked)
         }
         sdkInitDelaySwitcher.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.setSdkInitDelayEnabled(enabled = isChecked)
+            viewModel.setSdkInitDelayEnabled(isChecked)
+        }
+        subtitleShowOrgUnitSwitcher.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setSubtitleShowOrgUnitEnabled(isChecked)
         }
     }
 

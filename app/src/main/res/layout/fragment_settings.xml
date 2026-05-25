@@ -214,6 +214,23 @@
                         android:textOff=""
                         android:textOn="" />
 
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#D3D4D5" />
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/subtitleShowOrgUnitSwitcher"
+                        style="@style/SwitchStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:padding="8dp"
+                        android:text="@string/subtitle_show_org_unit"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textOff=""
+                        android:textOn="" />
+
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>

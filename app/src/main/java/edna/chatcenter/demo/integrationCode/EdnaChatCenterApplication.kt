@@ -34,6 +34,7 @@ import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyKeepWebSocketD
 import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyOpenGraph
 import edna.chatcenter.demo.appCode.fragments.settings.settingsKeySdkInitDelay
 import edna.chatcenter.demo.appCode.fragments.settings.settingsKeySearch
+import edna.chatcenter.demo.appCode.fragments.settings.settingsKeySubtitleShowOrgUnit
 import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyVoiceMessages
 import edna.chatcenter.demo.appCode.fragments.settings.settingsPreferencesName
 import edna.chatcenter.demo.appCode.fragments.settings.settingsWebSocketReconnect
@@ -96,7 +97,6 @@ class EdnaChatCenterApplication : Application() {
     }
 
     private fun initLibrary() {
-        initThemes()
         initChatCenterUI { isAsyncInit ->
             checkAndUpdateTokens()
 
@@ -245,12 +245,18 @@ class EdnaChatCenterApplication : Application() {
             backBtn = R.drawable.alt_ic_arrow_back_24dp,
             scrollDownButtonIcon = R.drawable.alt_threads_scroll_down_icon_black
         )
+        val subtitleShowOrgUnit = settingsPreferences.getBoolean(
+            settingsKeySubtitleShowOrgUnit, true
+        )
         val lightChatComponents = ChatComponents(
             applicationContext,
             colors = lightColors,
             images = lightImages
         ).apply {
-            navigationBarStyle = navigationBarStyle.copy(closeButtonEnabled = false)
+            navigationBarStyle = navigationBarStyle.copy(
+                closeButtonEnabled = false,
+                subtitleShowOrgUnit = subtitleShowOrgUnit
+            )
         }
 
         val darkChatComponents = ChatComponents(
@@ -258,7 +264,10 @@ class EdnaChatCenterApplication : Application() {
             colors = darkColors,
             images = darkImages
         ).apply {
-            navigationBarStyle = navigationBarStyle.copy(closeButtonEnabled = false)
+            navigationBarStyle = navigationBarStyle.copy(
+                closeButtonEnabled = false,
+                subtitleShowOrgUnit = subtitleShowOrgUnit
+            )
         }
 
         // chatDarkTheme = ChatTheme(darkChatComponents) // темная тема
@@ -337,6 +346,8 @@ class EdnaChatCenterApplication : Application() {
         onInitComplete: (isAsyncInit: Boolean) -> Unit,
     ) {
         isSdkInitializing = true
+
+        initThemes()
 
         val loggerConfig = ChatLoggerConfig(
             applicationContext,

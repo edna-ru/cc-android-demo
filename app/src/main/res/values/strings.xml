@@ -94,6 +94,7 @@
     <string name="unread_messages_count">Кол-во непрочитанных сообщений</string>
     <string name="prefill_chat_input">Предзаполнить поле ввода</string>
     <string name="sdk_init_delay">Задержка инициализации SDK (1 сек)</string>
+    <string name="subtitle_show_org_unit">Показывать Organization Unit консультанта в подзаголовке</string>
 
     <!-- Пример переопределения строки в SDK -->
     <!-- <string name="ecc_input_placeholder">Type your message</string> -->
