@@ -2,12 +2,10 @@ package edna.chatcenter.demo.integrationCode
 
 import android.app.Application
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.edit
 import com.google.firebase.messaging.FirebaseMessaging
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
@@ -27,17 +25,7 @@ import edna.chatcenter.demo.appCode.business.PreferencesProvider
 import edna.chatcenter.demo.appCode.business.ServersProvider
 import edna.chatcenter.demo.appCode.business.appModule
 import edna.chatcenter.demo.appCode.fragments.log.LogViewModel
-import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyAppDayNightTheme
-import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyAsyncInit
-import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyKeepWebSocket
-import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyKeepWebSocketDuringSession
-import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyOpenGraph
-import edna.chatcenter.demo.appCode.fragments.settings.settingsKeySdkInitDelay
-import edna.chatcenter.demo.appCode.fragments.settings.settingsKeySearch
-import edna.chatcenter.demo.appCode.fragments.settings.settingsKeySubtitleShowOrgUnit
-import edna.chatcenter.demo.appCode.fragments.settings.settingsKeyVoiceMessages
-import edna.chatcenter.demo.appCode.fragments.settings.settingsPreferencesName
-import edna.chatcenter.demo.appCode.fragments.settings.settingsWebSocketReconnect
+import edna.chatcenter.demo.appCode.business.SettingsStorage
 import edna.chatcenter.demo.appCode.models.LogModel
 import edna.chatcenter.demo.appCode.models.ServerConfig
 import edna.chatcenter.demo.appCode.push.HCMTokenRefresher
@@ -47,7 +35,10 @@ import edna.chatcenter.ui.visual.core.ChatCenterUI
 import edna.chatcenter.ui.visual.uiStyle.settings.ChatTheme
 import edna.chatcenter.ui.visual.uiStyle.settings.components.ChatComponents
 import edna.chatcenter.ui.visual.uiStyle.settings.flows.ChatFlows
+import edna.chatcenter.ui.visual.uiStyle.settings.configs.EdgeToEdgeConfig
+import edna.chatcenter.ui.visual.uiStyle.settings.configs.InsetsConfig
 import edna.chatcenter.ui.visual.uiStyle.settings.styles.ImagesChatStyle
+import edna.chatcenter.ui.visual.uiStyle.settings.styles.EccSystemBarStyle
 import edna.chatcenter.ui.visual.uiStyle.settings.theme.ChatColors
 import edna.chatcenter.ui.visual.uiStyle.settings.theme.ChatImages
 import kotlinx.coroutines.CoroutineScope
@@ -71,9 +62,7 @@ class EdnaChatCenterApplication : Application() {
 
     private val serversProvider: ServersProvider by inject()
     private val preferences: PreferencesProvider by inject()
-    private val settingsPreferences: SharedPreferences by lazy {
-        getSharedPreferences(settingsPreferencesName, MODE_PRIVATE)
-    }
+    private val settings: SettingsStorage by inject()
 
     var chatCenterUI: ChatCenterUI? = null
     var isSdkInitializing = false
@@ -82,8 +71,6 @@ class EdnaChatCenterApplication : Application() {
     val unreadCountMessagesFlow = MutableStateFlow(0U)
 
     override fun onCreate() {
-        setupAppDayNightMode()
-
         super.onCreate()
         startAppCenter()
 
@@ -91,6 +78,9 @@ class EdnaChatCenterApplication : Application() {
             androidContext(this@EdnaChatCenterApplication)
             modules(appModule)
         }
+
+        // Зависит от SettingsStorage из DI, поэтому вызывается после startKoin.
+        setupAppDayNightMode()
 
         preferences.resetDemoMode()
         initLibrary()
@@ -117,7 +107,7 @@ class EdnaChatCenterApplication : Application() {
         apiVersion: ChatApiVersion = ChatApiVersion.defaultApiVersionEnum,
         onInitComplete: (isAsyncInit: Boolean) -> Unit = {},
     ) {
-        val isSdkInitDelayEnabled = settingsPreferences.getBoolean(settingsKeySdkInitDelay, false)
+        val isSdkInitDelayEnabled = settings.sdkInitDelayEnabled
 
         if (isSdkInitDelayEnabled) {
             isSdkInitializing = true
@@ -245,9 +235,7 @@ class EdnaChatCenterApplication : Application() {
             backBtn = R.drawable.alt_ic_arrow_back_24dp,
             scrollDownButtonIcon = R.drawable.alt_threads_scroll_down_icon_black
         )
-        val subtitleShowOrgUnit = settingsPreferences.getBoolean(
-            settingsKeySubtitleShowOrgUnit, true
-        )
+        val subtitleShowOrgUnit = settings.subtitleShowOrgUnitEnabled
         val lightChatComponents = ChatComponents(
             applicationContext,
             colors = lightColors,
@@ -283,6 +271,24 @@ class EdnaChatCenterApplication : Application() {
         // chatLightTheme = ChatTheme(applicationContext, lightColors, lightImages) // можно передать только нужные ресуры
 
         val lightFlows = ChatFlows(lightChatComponents).apply {
+            // Чат и галерея настраиваются независимо. Конфигурация edge-to-edge задаётся только
+            // когда режим активен; иначе остаётся null (режим совместимости).
+            val edgeToEdgeActive = settings.edgeToEdgeMode.isActiveOn()
+            chatFlow.edgeToEdge = if (edgeToEdgeActive) {
+                EdgeToEdgeConfig(statusBarStyle = EccSystemBarStyle.Dark())
+            } else {
+                null
+            }
+            // Встроенный ChatFragment обрабатывает отступы согласно hostInsets.
+            chatFlow.hostInsets = if (edgeToEdgeActive) InsetsConfig() else null
+            galleryFlow.edgeToEdge = if (edgeToEdgeActive) {
+                EdgeToEdgeConfig(
+                    statusBarStyle = EccSystemBarStyle.Dark(),
+                    navigationBarStyle = EccSystemBarStyle.Dark()
+                )
+            } else {
+                null
+            }
             chatFlow.outcomeMessages.imagesTimeTextWhenError = chatFlow.outcomeMessages.imagesTimeText.copy(
                 textColor = R.color.white_color
             )
@@ -305,6 +311,10 @@ class EdnaChatCenterApplication : Application() {
         chatLightTheme = ChatTheme(lightFlows) // создайте инстанс, переопределив точечно нужные элементы
 
         val darkFlows = ChatFlows(darkChatComponents).apply {
+            val edgeToEdgeActive = settings.edgeToEdgeMode.isActiveOn()
+            chatFlow.edgeToEdge = if (edgeToEdgeActive) EdgeToEdgeConfig() else null
+            chatFlow.hostInsets = if (edgeToEdgeActive) InsetsConfig() else null
+            galleryFlow.edgeToEdge = if (edgeToEdgeActive) EdgeToEdgeConfig() else null
             chatFlow.outcomeMessages.imagesTimeTextWhenError = chatFlow.outcomeMessages.imagesTimeText.copy(
                 textColor = R.color.white_color
             )
@@ -387,19 +397,18 @@ class EdnaChatCenterApplication : Application() {
         val certificates = server.trustedSSLCertificates?.map {
             ChatSSLCertificate(it)
         }?.toTypedArray() ?: arrayOf()
-        val isReconnectEnabled = settingsPreferences.getBoolean(settingsWebSocketReconnect, false)
+        val isReconnectEnabled = settings.webSocketReconnectEnabled
         val networkConfig = ChatNetworkConfig(
             HTTPConfig(),
             WSConfig(isReconnectEnabled = isReconnectEnabled, maxReconnectAttempts = 8),
             SSLPinningConfig(certificates, server.allowUntrustedSSLCertificate)
         )
 
-        val isSearchEnabled = settingsPreferences.getBoolean(settingsKeySearch, true)
-        val isLinkPreviewEnabled = settingsPreferences.getBoolean(settingsKeyOpenGraph, true)
-        val isVoiceRecordingEnabled = settingsPreferences.getBoolean(settingsKeyVoiceMessages, true)
-        val isKeepWebSocketActive = settingsPreferences.getBoolean(settingsKeyKeepWebSocket, false)
-        val isKeepWebSocketActiveDuringSession =
-            settingsPreferences.getBoolean(settingsKeyKeepWebSocketDuringSession, false)
+        val isSearchEnabled = settings.searchEnabled
+        val isLinkPreviewEnabled = settings.openGraphEnabled
+        val isVoiceRecordingEnabled = settings.voiceMessagesEnabled
+        val isKeepWebSocketActive = settings.keepWebSocketEnabled
+        val isKeepWebSocketActiveDuringSession = settings.keepWebSocketDuringSessionEnabled
 
         chatConfig?.apply {
             searchEnabled = isSearchEnabled
@@ -422,7 +431,7 @@ class EdnaChatCenterApplication : Application() {
             userInputEnabled = server.isInputEnabled
         }
 
-        val needInitAsynchronously = settingsPreferences.getBoolean(settingsKeyAsyncInit, true)
+        val needInitAsynchronously = settings.asyncInitEnabled
         chatCenterUI = ChatCenterUI(applicationContext, loggerConfig).apply {
             theme = chatLightTheme
             darkTheme = chatDarkTheme
@@ -456,11 +465,11 @@ class EdnaChatCenterApplication : Application() {
             AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
         }
 
-        val dayNightMode = settingsPreferences.getInt(settingsKeyAppDayNightTheme, defaultMode)
+        val dayNightMode = settings.appDayNightTheme(defaultMode)
         AppCompatDelegate.setDefaultNightMode(dayNightMode)
 
         if (defaultMode == dayNightMode) {
-            settingsPreferences.edit { putInt(settingsKeyAppDayNightTheme, dayNightMode) }
+            settings.setAppDayNightTheme(dayNightMode)
         }
     }
 

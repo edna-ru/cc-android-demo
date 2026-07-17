@@ -20,13 +20,17 @@ import androidx.viewbinding.ViewBinding
 import edna.chatcenter.demo.R
 import edna.chatcenter.demo.appCode.fragments.demoSamplesFragment.DemoSamplesFragment
 import edna.chatcenter.demo.appCode.fragments.demoSamplesList.DemoSamplesListFragment
+import edna.chatcenter.demo.appCode.business.SettingsStorage
 import edna.chatcenter.demo.integrationCode.EdnaChatCenterApplication
 import edna.chatcenter.ui.visual.core.ChatCenterUI
+import org.koin.android.ext.android.inject
 import java.lang.ref.SoftReference
 
 abstract class BaseAppFragment<T : ViewBinding>(
     private val bindingInflater: (layoutInflater: LayoutInflater) -> T
 ) : Fragment() {
+
+    protected val settingsStorage: SettingsStorage by inject()
 
     protected val chatCenterUI: ChatCenterUI?
         get() {
@@ -47,14 +51,14 @@ abstract class BaseAppFragment<T : ViewBinding>(
         super.onViewCreated(view, savedInstanceState)
         setBarsColor()
 
-        if (needHandleInsets()) {
+        if (needHandleDefaultInsets()) {
             setupInsets(view)
         }
     }
 
     override fun onResume() {
         super.onResume()
-        setupStatusBarLightAppearance(requireView())
+        applyStatusBarLightAppearance(needDarkStatusBar())
     }
 
     protected fun subscribeToGlobalBackClick() {
@@ -110,8 +114,17 @@ abstract class BaseAppFragment<T : ViewBinding>(
         }
     }
 
-    private fun setupStatusBarLightAppearance(view: View) {
-        val isApi35 = Build.VERSION.SDK_INT > Build.VERSION_CODES.UPSIDE_DOWN_CAKE
+    /**
+     * Применяет внешний вид иконок статус-бара с учётом темы и режима edge-to-edge.
+     *
+     * Используется как при настройке в [onResume] (по [needDarkStatusBar]), так и для экранов,
+     * которые задают цвет иконок динамически (например, по выбранной вкладке).
+     *
+     * @param needDarkStatusBar требуются ли тёмные иконки (для светлого фона). Значение учитывается
+     *   только в режиме edge-to-edge: в тёмной теме и в режиме совместимости фон статус-бара тёмный,
+     *   поэтому всегда применяются светлые иконки независимо от параметра.
+     */
+    protected fun applyStatusBarLightAppearance(needDarkStatusBar: Boolean) {
         val isDarkThemeOn = when (AppCompatDelegate.getDefaultNightMode()) {
             AppCompatDelegate.MODE_NIGHT_YES -> true
             AppCompatDelegate.MODE_NIGHT_NO -> false
@@ -119,18 +132,48 @@ abstract class BaseAppFragment<T : ViewBinding>(
                     Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
         }
         val isLightStatusBar = when {
+            // Тёмная тема: фон статус-бара тёмный (прозрачный над тёмным контентом либо тёмный фон
+            // темы), требуются светлые иконки.
             isDarkThemeOn -> false
-            /* WindowInsets не настроены, всегда темный статус бар */
-            isApi35.not() -> false
-            else -> needDarkStatusBar()
+            // Режим совместимости (edge-to-edge не активен и не навязан платформой): WindowInsets
+            // не настроены, фон статус-бара тёмный, требуются светлые иконки.
+            !isWindowEdgeToEdge() -> false
+            // Режим edge-to-edge: фон статус-бара прозрачный, цвет иконок определяется экраном.
+            else -> needDarkStatusBar
         }
+        setStatusBarLightAppearance(isLightStatusBar)
+    }
+
+    /**
+     * Находится ли окно в режиме edge-to-edge: режим edge-to-edge из настроек
+     * ([SettingsStorage.edgeToEdgeMode]) активен либо edge-to-edge навязан платформой (Android 15+
+     * при `targetSdk >= 35`, когда отмена невозможна).
+     */
+    private fun isWindowEdgeToEdge(): Boolean {
+        val context = context ?: return false
+        val forcedByPlatform =
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM &&
+                context.applicationInfo.targetSdkVersion >= Build.VERSION_CODES.VANILLA_ICE_CREAM
+        val edgeToEdgeActive = settingsStorage.edgeToEdgeMode.isActiveOn()
+
+        return edgeToEdgeActive || forcedByPlatform
+    }
+
+    private fun setStatusBarLightAppearance(isLight: Boolean) {
+        val view = this.view ?: return
         val window = requireActivity().window
-        WindowInsetsControllerCompat(window, view).isAppearanceLightStatusBars = isLightStatusBar
+        val controller = WindowInsetsControllerCompat(window, view)
+        // На API < 30 запись isAppearanceLightStatusBars меняет systemUiVisibility decor-view и
+        // инициирует новый проход WindowInsets. Этот метод вызывается часто и повторно (onResume),
+        // поэтому пишем только при реальном изменении.
+        if (controller.isAppearanceLightStatusBars != isLight) {
+            controller.isAppearanceLightStatusBars = isLight
+        }
     }
 
     protected fun getBinding() = binding?.get()
 
-    protected open fun needHandleInsets(): Boolean = true
+    protected open fun needHandleDefaultInsets(): Boolean = true
 
     protected open fun needDarkStatusBar(): Boolean = false
 }

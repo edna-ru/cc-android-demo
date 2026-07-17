@@ -52,7 +52,7 @@ class ServerListFragment :
         clearResultListeners()
     }
 
-    override fun needHandleInsets(): Boolean {
+    override fun needHandleDefaultInsets(): Boolean {
         return false
     }
 

@@ -50,7 +50,7 @@ class LaunchFragment : BaseAppFragment<FragmentLaunchBinding>(FragmentLaunchBind
         unregisterReceivers()
     }
 
-    override fun needHandleInsets(): Boolean {
+    override fun needHandleDefaultInsets(): Boolean {
         return false
     }
 

@@ -86,6 +86,7 @@
     <string name="to_next_log">К следущему логу</string>
     <string name="sdk_settings">настройки sdk</string>
     <string name="async_init">Асинхронная инициализация SDK</string>
+    <string name="async_authorization">Асинхронная авторизация</string>
     <string name="search">Поиск</string>
     <string name="opengraph">Отображение OpenGraph</string>
     <string name="keep_websocket">Оставлять WebSocket активным (тест счетчика)</string>
@@ -95,6 +96,11 @@
     <string name="prefill_chat_input">Предзаполнить поле ввода</string>
     <string name="sdk_init_delay">Задержка инициализации SDK (1 сек)</string>
     <string name="subtitle_show_org_unit">Показывать Organization Unit консультанта в подзаголовке</string>
+    <string name="edge_to_edge_settings">Режим edge-to-edge</string>
+    <string name="edge_to_edge_legacy">Legacy - с Android 15 (API 35+)</string>
+    <string name="edge_to_edge_from_11">С Android 11 (API 30+)</string>
+    <string name="edge_to_edge_all_versions">Все версии (API 21+)</string>
+    <string name="edge_to_edge_restart_hint">Перезапустите приложение для применения режима edge-to-edge</string>
 
     <!-- Пример переопределения строки в SDK -->
     <!-- <string name="ecc_input_placeholder">Сообщение</string>  -->

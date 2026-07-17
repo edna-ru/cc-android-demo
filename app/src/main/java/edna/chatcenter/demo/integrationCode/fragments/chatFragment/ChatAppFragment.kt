@@ -2,6 +2,7 @@ package edna.chatcenter.demo.integrationCode.fragments.chatFragment
 
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.StateListDrawable
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -42,46 +43,79 @@ class ChatAppFragment : BaseAppFragment<FragmentChatBinding>(FragmentChatBinding
         ChatFragment.weakInstance.clear()
     }
 
-    override fun needHandleInsets(): Boolean {
+    override fun needHandleDefaultInsets(): Boolean {
         return false
     }
 
+    override fun needDarkStatusBar(): Boolean {
+        val currentTab = getBinding()?.viewPager?.currentItem ?: TAB_INDEX_START
+
+        return when (currentTab) {
+            TAB_INDEX_CHAT, TAB_INDEX_LOG -> false
+            else -> true
+        }
+    }
+
     private fun setupInsets(view: View) {
+        // Системные отступы обрабатываются, только если режим edge-to-edge активен — согласованно
+        // с вызовом enableEdgeToEdge() в активити. Если режим неактивен, окно не находится в
+        // режиме edge-to-edge и отступы обрабатываются платформой.
+        if (!settingsStorage.edgeToEdgeMode.isActiveOn()) return
+
         val tabLayout = binding?.get()?.tabLayout ?: return
 
         ViewCompat.setOnApplyWindowInsetsListener(view) { _, windowInsets ->
+            // systemBars.bottom — стабильная высота навигационного бара (клавиатуру он не включает:
+            // на API >= 30 это отдельный тип ime, на API < 30 клавиатура приходит через
+            // systemWindowInsets, см. ниже).
             val systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            val ime = windowInsets.getInsets(WindowInsetsCompat.Type.ime())
-            val systemBarsBottom = systemBars.bottom
+
+            // Под областью чата (viewPager) расположены навигационный бар и tabLayout. На их высоту
+            // клавиатура не перекрывает чат, поэтому она вычитается из инсета, передаваемого вниз.
+            val belowChat = systemBars.bottom + tabLayout.height
 
             tabLayout.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                bottomMargin = systemBarsBottom
+                bottomMargin = systemBars.bottom
             }
 
-            val updatedSystemBars = Insets.of(
-                /* left = */ systemBars.left,
-                /* top = */ systemBars.top,
-                /* right = */ systemBars.right,
-                /* bottom = */ 0
-            )
+            if (supportsImeInsets()) {
+                // API >= 30: ime отделяется от системных баров. Вниз передаётся скорректированный
+                // ime, нижний системный инсет обнуляется (его уже учли tabLayout и навигационный
+                // бар).
+                val ime = windowInsets.getInsets(WindowInsetsCompat.Type.ime())
+                val updatedImeBottom = maxOf(0, ime.bottom - belowChat)
 
-            /* Необходимо вычесть из IME высоту, всего что родитель поглотил снизу:
-            * в данном случае это системный navigation bar и tabLayout
-            * Передача WindowInsets типа IME работает только для API >= 30 */
-            val updatedImeBottom = maxOf(0, ime.bottom - systemBarsBottom - tabLayout.height)
-            val updatedIme = Insets.of(
-                /* left = */ ime.left,
-                /* top = */ ime.top,
-                /* right = */ ime.right,
-                /* bottom = */ updatedImeBottom
-            )
+                WindowInsetsCompat.Builder(windowInsets)
+                    .setInsets(
+                        WindowInsetsCompat.Type.systemBars(),
+                        Insets.of(systemBars.left, systemBars.top, systemBars.right, 0)
+                    )
+                    .setInsets(
+                        WindowInsetsCompat.Type.ime(),
+                        Insets.of(ime.left, ime.top, ime.right, updatedImeBottom)
+                    )
+                    .build()
+            } else {
+                // API < 30: insets ime() ненадёжны и не отделяются от системных баров, а
+                // setInsets(ime()) не доходит до дочернего фрагмента. Корректируется
+                // systemWindowInsets — при adjustResize его нижний инсет включает высоту клавиатуры
+                // (ChatFragment SDK на API < 30 читает именно его).
+                @Suppress("DEPRECATION")
+                val legacyBottom = windowInsets.systemWindowInsets.bottom
+                val childBottom = maxOf(0, legacyBottom - belowChat)
 
-            return@setOnApplyWindowInsetsListener WindowInsetsCompat.Builder(windowInsets)
-                .setInsets(WindowInsetsCompat.Type.systemBars(), updatedSystemBars)
-                .setInsets(WindowInsetsCompat.Type.ime(), updatedIme)
-                .build()
+                @Suppress("DEPRECATION")
+                WindowInsetsCompat.Builder(windowInsets)
+                    .setSystemWindowInsets(
+                        Insets.of(systemBars.left, systemBars.top, systemBars.right, childBottom)
+                    )
+                    .build()
+            }
         }
     }
+
+    /** Insets `WindowInsetsCompat.Type.ime()` надёжны только начиная с API 30 (как и в SDK). */
+    private fun supportsImeInsets(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
 
     private fun initTabs() = getBinding()?.apply {
         viewPager.isUserInputEnabled = false
@@ -187,6 +221,7 @@ class ChatAppFragment : BaseAppFragment<FragmentChatBinding>(FragmentChatBinding
     }
 
     companion object {
+        const val TAB_INDEX_START = 0
         const val TAB_INDEX_CHAT = 1
         const val TAB_INDEX_LOG = 2
         const val TABS_COUNT = 3

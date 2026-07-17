@@ -1,6 +1,7 @@
 package edna.chatcenter.demo.integrationCode.fragments.launch
 
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -17,6 +18,7 @@ import edna.chatcenter.core.models.enums.ChatApiVersion.Companion.defaultApiVers
 import edna.chatcenter.demo.R
 import edna.chatcenter.demo.appCode.business.PreferencesProvider
 import edna.chatcenter.demo.appCode.business.ServersProvider
+import edna.chatcenter.demo.appCode.business.SettingsStorage
 import edna.chatcenter.demo.appCode.business.jsonStringToMap
 import edna.chatcenter.demo.appCode.extensions.getCompatParcelable
 import edna.chatcenter.demo.appCode.models.ServerConfig
@@ -27,7 +29,8 @@ import edna.chatcenter.ui.visual.ChatConfig
 
 class LaunchViewModel(
     private val preferences: PreferencesProvider,
-    private val serversProvider: ServersProvider
+    private val serversProvider: ServersProvider,
+    private val settingsStorage: SettingsStorage,
 ) : ViewModel(), DefaultLifecycleObserver {
 
     private var testConfig: ChatConfig? = null
@@ -95,28 +98,44 @@ class LaunchViewModel(
 
         if (serverConfig != null && isUserHasRequiredFields) {
             changeChatCenterSettings(serverConfig, testConfig) {
-                if (user != null) callInitUser(user)
-                navigationController.navigate(R.id.action_LaunchFragment_to_ChatAppFragment)
+                if (user != null) {
+                    callInitUser(user) {
+                        navigationController.navigate(R.id.action_LaunchFragment_to_ChatAppFragment)
+                    }
+                }
             }
         }
     }
 
-    private fun callInitUser(user: UserInfo) {
+    private fun callInitUser(user: UserInfo, onComplete: () -> Unit = {}) {
         val userData = try {
             user.userData?.jsonStringToMap()
-        } catch (exc: Exception) {
+        } catch (_: Exception) {
             _incorrectUserLiveData.postValue(true)
             null
         }
-        application?.chatCenterUI?.authorize(
-            ChatUser(user.userId!!, data = userData),
-            ChatAuth(
-                user.authorizationHeader,
-                user.xAuthSchemaHeader,
-                signature = user.signature
-            )
+        val client = ChatUser(user.userId!!, data = userData)
+        val auth = ChatAuth(
+            user.authorizationHeader,
+            user.xAuthSchemaHeader,
+            signature = user.signature
         )
-        application?.subscribeToUnreadMessages()
+        val onAuthorized = {
+            application?.subscribeToUnreadMessages()
+            onComplete()
+        }
+
+        if (settingsStorage.asyncAuthEnabled) {
+            application?.chatCenterUI?.authorizeAsync(
+                client = client,
+                auth = auth,
+                onComplete = onAuthorized,
+                onError = { _incorrectUserLiveData.postValue(true) }
+            )
+        } else {
+            application?.chatCenterUI?.authorize(client, auth)
+            onAuthorized()
+        }
     }
 
     private fun changeChatCenterSettings(

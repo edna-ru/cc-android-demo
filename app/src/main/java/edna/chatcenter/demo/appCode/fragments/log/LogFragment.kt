@@ -3,7 +3,13 @@ package edna.chatcenter.demo.appCode.fragments.log
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.doOnAttach
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
@@ -22,6 +28,7 @@ class LogFragment : BaseAppFragment<FragmentLogBinding>(FragmentLogBinding::infl
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupInsets(view)
         createAdapter()
         initListeners()
         initNextAndPrevButtons()
@@ -31,6 +38,40 @@ class LogFragment : BaseAppFragment<FragmentLogBinding>(FragmentLogBinding::infl
     override fun onResume() {
         super.onResume()
         viewModel.onLogViewResume()
+    }
+
+    override fun needHandleDefaultInsets(): Boolean {
+        return false
+    }
+
+    override fun needDarkStatusBar(): Boolean {
+        return false
+    }
+
+    private fun setupInsets(view: View) {
+        // Системные отступы обрабатываются, только если режим edge-to-edge активен — согласованно
+        // с вызовом enableEdgeToEdge() в активити. Если режим неактивен, окно не находится в
+        // режиме edge-to-edge и отступы обрабатываются платформой.
+        if (!settingsStorage.edgeToEdgeMode.isActiveOn()) return
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, windowInsets ->
+            applyInsets(windowInsets)
+            return@setOnApplyWindowInsetsListener windowInsets
+        }
+        ViewCompat.requestApplyInsets(view)
+
+        // Повторное применение корневых insets при присоединении view к окну
+        view.doOnAttach { attachedView ->
+            ViewCompat.getRootWindowInsets(attachedView)?.let(::applyInsets)
+        }
+    }
+
+    private fun applyInsets(windowInsets: WindowInsetsCompat) {
+        val systemBarsTop = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()).top
+        binding?.get()?.toolbar?.updatePadding(top = systemBarsTop)
+        binding?.get()?.toolbarShadow?.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            topMargin = systemBarsTop
+        }
     }
 
     private fun initListeners() = getBinding()?.apply {

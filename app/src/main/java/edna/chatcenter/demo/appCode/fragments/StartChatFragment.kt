@@ -1,7 +1,6 @@
 package edna.chatcenter.demo.appCode.fragments
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -9,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.doOnAttach
 import androidx.core.view.marginTop
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.Lifecycle
@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.java.KoinJavaComponent
 
-class StartChatFragment() :
+class StartChatFragment :
     BaseAppFragment<FragmentStartChatBinding>(FragmentStartChatBinding::inflate) {
 
     private val uiThemeProvider: UiThemeProvider by KoinJavaComponent.inject(UiThemeProvider::class.java)
@@ -46,7 +46,7 @@ class StartChatFragment() :
         initView()
     }
 
-    override fun needHandleInsets(): Boolean {
+    override fun needHandleDefaultInsets(): Boolean {
         return false
     }
 
@@ -55,6 +55,11 @@ class StartChatFragment() :
     }
 
     private fun setupInsets(view: View) {
+        // Системные отступы обрабатываются, только если режим edge-to-edge активен — согласованно
+        // с вызовом enableEdgeToEdge() в активити. Если режим неактивен, окно не находится в
+        // режиме edge-to-edge и отступы обрабатываются платформой.
+        if (!settingsStorage.edgeToEdgeMode.isActiveOn()) return
+
         val logoOriginalMarginTop = binding?.get()?.logo?.marginTop ?: 0
 
         val applyInsets = { windowInsets: WindowInsetsCompat ->
@@ -69,16 +74,9 @@ class StartChatFragment() :
             windowInsets
         }
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            val attachStateChangeListener = object : View.OnAttachStateChangeListener {
-                override fun onViewAttachedToWindow(attachedView: View) {
-                    attachedView.removeOnAttachStateChangeListener(this)
-                    ViewCompat.getRootWindowInsets(attachedView)?.let(applyInsets)
-                }
-
-                override fun onViewDetachedFromWindow(v: View) {}
-            }
-            view.addOnAttachStateChangeListener(attachStateChangeListener)
+        // Повторное применение корневых insets при присоединении view к окну
+        view.doOnAttach { attachedView ->
+            ViewCompat.getRootWindowInsets(attachedView)?.let(applyInsets)
         }
     }
 

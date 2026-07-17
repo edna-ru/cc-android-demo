@@ -78,7 +78,7 @@ class UserListFragment :
         adapter?.get()?.getItem(position)?.let { viewModel.removeUser(it) }
     }
 
-    override fun needHandleInsets(): Boolean {
+    override fun needHandleDefaultInsets(): Boolean {
         return false
     }
 

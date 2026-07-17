@@ -7,9 +7,11 @@ import edna.chatcenter.demo.appCode.fragments.demoSamplesList.DemoSamplesListVie
 import edna.chatcenter.demo.appCode.fragments.log.LogViewModel
 import edna.chatcenter.demo.appCode.fragments.server.AddServerViewModel
 import edna.chatcenter.demo.appCode.fragments.server.ServerListViewModel
+import edna.chatcenter.demo.appCode.fragments.settings.SettingsViewModel
 import edna.chatcenter.demo.appCode.fragments.user.AddUserViewModel
 import edna.chatcenter.demo.appCode.fragments.user.UserListViewModel
 import edna.chatcenter.demo.integrationCode.fragments.launch.LaunchViewModel
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -19,8 +21,9 @@ val appModule = module {
     single { StringsProvider(get()) }
     single { PreferencesProvider(get()) }
     single { UiThemeProvider(get()) }
+    single { SettingsStorage(androidContext()) }
     factory { ServersProvider(get(), get()) }
-    viewModel { LaunchViewModel(get(), get()) }
+    viewModel { LaunchViewModel(get(), get(), get()) }
     viewModel { UserListViewModel(get()) }
     viewModel { AddUserViewModel(get()) }
     viewModel { ServerListViewModel(get(), get()) }
@@ -28,4 +31,5 @@ val appModule = module {
     viewModel { DemoSamplesViewModel(get(), get()) }
     viewModel { DemoSamplesListViewModel(get(), get(), get()) }
     viewModel { LogViewModel() }
+    viewModel { SettingsViewModel(get()) }
 }
