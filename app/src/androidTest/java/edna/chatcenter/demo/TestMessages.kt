@@ -342,6 +342,78 @@ object TestMessages {
         "</body>\n" +
         "</html>\n"
 
+    /**
+     * Сокет-сообщение бота с быстрыми ответами и `settings.blockInput:true`: сценарий первого
+     * входа, когда быстрые ответы приходят по сокету уже после загрузки (пустой) истории
+     */
+    const val botWithBlockingQuickRepliesSocketMessage = "{\"action\":\"getMessages\"," +
+        "\"data\":{\"messages\":[{\"messageId\":\"2f423d54-14cd-4b05-b235-ca10a9b7cea0\",\"sentAt\":\"2025-01-29T10:16:11.602Z\"," +
+        "\"notification\":\"Получено новое сообщение в чате\",\"content\":{\"type\":\"MESSAGE\",\"clientId\":\"15717\"," +
+        "\"threadId\":4708894,\"isPreRegister\":false,\"providerIds\":[],\"uuid\":\"2f423d54-14cd-4b05-b235-ca10a9b7cea0\"," +
+        "\"operator\":{\"id\":483,\"name\":\"Консультант\",\"alias\":null,\"status\":null,\"photoUrl\":null,\"gender\":null," +
+        "\"organizationUnit\":null,\"role\":\"EXTERNAL_BOT\"}," +
+        "\"text\":\"Здравствуйте. Выберите тематику из часто задаваемых вопросов ниже.\\n\\n\"," +
+        "\"receivedDate\":\"2025-01-29T10:16:11.602Z\",\"attachments\":[],\"quotes\":[]," +
+        "\"quickReplies\":[{\"id\":33963715,\"type\":\"TEXT\",\"text\":\"Список часто задаваемых вопросов\"," +
+        "\"imageUrl\":null,\"url\":null,\"shown_text\":null,\"callback_data\":null,\"payload\":null}],\"read\":false," +
+        "\"settings\":{\"blockInput\":true,\"masked\":false},\"isPersonalOffer\":false,\"authorized\":true,\"massPushMessage\":false," +
+        "\"externalClientId\":\"15717\",\"origin\":\"threads\"},\"attributes\":\"{\\\"clientId\\\":\\\"15717\\\"," +
+        "\\\"operatorName\\\":\\\"Консультант\\\",\\\"isPreRegister\\\":\\\"false\\\",\\\"aps/sound\\\":\\\"default\\\"," +
+        "\\\"origin\\\":\\\"threads\\\"}\",\"important\":true,\"messageType\":\"NORMAL\"}]}}"
+
+    /**
+     * `History`-ответ с сообщением быстрых ответов и `settings.blockInput:true`, пришедшим уже
+     * частью истории (тред не пуст: `agentInfo.thread` с ненулевым `id`)
+     *
+     * Сценарий перезахода в чат, где история наполняет адаптер асинхронно
+     */
+    const val historyWithBlockingQuickRepliesMessage = "{\"messages\":[" +
+        "{\"type\":\"MESSAGE\",\"threadId\":4708894,\"providerIds\":[]," +
+        "\"uuid\":\"2f423d54-14cd-4b05-b235-ca10a9b7cea0\"," +
+        "\"operator\":{\"id\":483,\"name\":\"Консультант\",\"alias\":null,\"status\":null,\"photoUrl\":null,\"gender\":null," +
+        "\"organizationUnit\":null,\"role\":\"EXTERNAL_BOT\"}," +
+        "\"text\":\"Здравствуйте. Выберите тематику из часто задаваемых вопросов ниже.\\n\\n\"," +
+        "\"receivedDate\":\"2025-01-29T10:16:11.602Z\",\"attachments\":[],\"quotes\":[]," +
+        "\"quickReplies\":[{\"id\":33963715,\"type\":\"TEXT\",\"text\":\"Список часто задаваемых вопросов\"," +
+        "\"imageUrl\":null,\"url\":null,\"shown_text\":null,\"callback_data\":null,\"payload\":null}],\"read\":false," +
+        "\"settings\":{\"blockInput\":true,\"masked\":false},\"isPersonalOffer\":false,\"authorized\":true,\"massPushMessage\":false," +
+        "\"externalClientId\":\"15717\",\"origin\":\"threads\"}]," +
+        "\"agentInfo\":{\"action\":\"AGENT_LOOKUP\",\"actionDate\":\"2025-01-29T10:16:11.602Z\"," +
+        "\"thread\":{\"id\":4708894,\"state\":\"ASSIGNED\"}," +
+        "\"agent\":{\"id\":483,\"name\":\"Консультант\",\"alias\":null,\"status\":null,\"photoUrl\":null,\"gender\":null," +
+        "\"organizationUnit\":null,\"role\":\"EXTERNAL_BOT\"}},\"allowedToSendMessages\":true}"
+
+    /**
+     * `History`-ответ с сообщением быстрых ответов и `settings.blockInput:true`, на которое
+     * пользователь уже ответил: следом в истории идёт его сообщение (`operator:null`, что в
+     * `HistoryParser` — дискриминатор `UserPhrase`, а не `ConsultPhrase`)
+     *
+     * Сценарий: кнопки отвечены (спрятаны), поле ввода должно быть активно
+     */
+    const val historyWithAnsweredBlockingQuickRepliesMessage = "{\"messages\":[" +
+        "{\"type\":\"MESSAGE\",\"threadId\":4708894,\"providerIds\":[]," +
+        "\"uuid\":\"2f423d54-14cd-4b05-b235-ca10a9b7cea0\"," +
+        "\"operator\":{\"id\":483,\"name\":\"Консультант\",\"alias\":null,\"status\":null,\"photoUrl\":null,\"gender\":null," +
+        "\"organizationUnit\":null,\"role\":\"EXTERNAL_BOT\"}," +
+        "\"text\":\"Здравствуйте. Выберите тематику из часто задаваемых вопросов ниже.\\n\\n\"," +
+        "\"receivedDate\":\"2025-01-29T10:16:11.602Z\",\"attachments\":[],\"quotes\":[]," +
+        "\"quickReplies\":[{\"id\":33963715,\"type\":\"TEXT\",\"text\":\"Список часто задаваемых вопросов\"," +
+        "\"imageUrl\":null,\"url\":null,\"shown_text\":null,\"callback_data\":null,\"payload\":null}],\"read\":false," +
+        "\"settings\":{\"blockInput\":true,\"masked\":false},\"isPersonalOffer\":false,\"authorized\":true,\"massPushMessage\":false," +
+        "\"externalClientId\":\"15717\",\"origin\":\"threads\"}," +
+        "{\"type\":\"MESSAGE\",\"threadId\":4708894,\"providerIds\":[]," +
+        "\"uuid\":\"8b7e5f21-9c34-4a1b-9d67-1f2e3a4b5c6d\"," +
+        "\"operator\":null," +
+        "\"text\":\"Список часто задаваемых вопросов\"," +
+        "\"receivedDate\":\"2025-01-29T10:17:11.602Z\",\"attachments\":[],\"quotes\":[]," +
+        "\"quickReplies\":[],\"read\":true," +
+        "\"settings\":{\"blockInput\":false,\"masked\":false},\"isPersonalOffer\":false,\"authorized\":true,\"massPushMessage\":false," +
+        "\"externalClientId\":\"15717\",\"origin\":\"threads\"}]," +
+        "\"agentInfo\":{\"action\":\"AGENT_LOOKUP\",\"actionDate\":\"2025-01-29T10:16:11.602Z\"," +
+        "\"thread\":{\"id\":4708894,\"state\":\"ASSIGNED\"}," +
+        "\"agent\":{\"id\":483,\"name\":\"Консультант\",\"alias\":null,\"status\":null,\"photoUrl\":null,\"gender\":null," +
+        "\"organizationUnit\":null,\"role\":\"EXTERNAL_BOT\"}},\"allowedToSendMessages\":true}"
+
     const val operatorEdnaRuMessage = "{\"action\":\"getMessages\",\"data\":{\"messages\":[" +
         "{\"messageId\":\"0238fafc-132e-4a7c-87e6-834d50c3a551\",\"sentAt\":\"2023-09-25T13:07:29.213Z\"," +
         "\"notification\":\"New chat message received\",\"content\":{\"type\":\"MESSAGE\",\"clientId\":\"545\"," +

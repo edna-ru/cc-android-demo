@@ -173,7 +173,7 @@
                     <com.google.android.material.materialswitch.MaterialSwitch
                         android:id="@+id/webSocketSwitcher"
                         style="@style/SwitchStyle"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="8dp"
                         android:text="@string/keep_websocket"
@@ -189,7 +189,7 @@
                     <com.google.android.material.materialswitch.MaterialSwitch
                         android:id="@+id/webSocketDuringSessionSwitcher"
                         style="@style/SwitchStyle"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="8dp"
                         android:text="@string/keep_websocket_during_session"
@@ -205,7 +205,7 @@
                     <com.google.android.material.materialswitch.MaterialSwitch
                         android:id="@+id/webSocketReconnectSwitcher"
                         style="@style/SwitchStyle"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="8dp"
                         android:text="@string/websocket_reconnect"
@@ -221,9 +221,8 @@
                     <com.google.android.material.materialswitch.MaterialSwitch
                         android:id="@+id/sdkInitDelaySwitcher"
                         style="@style/SwitchStyle"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
                         android:padding="8dp"
                         android:text="@string/sdk_init_delay"
                         android:textAppearance="?android:attr/textAppearanceMedium"
@@ -238,11 +237,26 @@
                     <com.google.android.material.materialswitch.MaterialSwitch
                         android:id="@+id/subtitleShowOrgUnitSwitcher"
                         style="@style/SwitchStyle"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
                         android:padding="8dp"
                         android:text="@string/subtitle_show_org_unit"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textOff=""
+                        android:textOn="" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#D3D4D5" />
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/showSendMenuOnShakeSwitcher"
+                        style="@style/SwitchStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:text="@string/show_send_menu_on_shake"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textOff=""
                         android:textOn="" />

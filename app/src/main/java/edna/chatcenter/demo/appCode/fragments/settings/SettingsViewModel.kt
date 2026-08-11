@@ -40,6 +40,10 @@ class SettingsViewModel(private val settings: SettingsStorage) : ViewModel() {
     private val _isSubtitleShowOrgUnitEnabled = MutableLiveData(settings.subtitleShowOrgUnitEnabled)
     val isSubtitleShowOrgUnitEnabled: LiveData<Boolean> = _isSubtitleShowOrgUnitEnabled
 
+    private val _isShowSendMenuOnShakeEnabled =
+        MutableLiveData(settings.showSendMenuOnShakeEnabled)
+    val isShowSendMenuOnShakeEnabled: LiveData<Boolean> = _isShowSendMenuOnShakeEnabled
+
     private val _appDayNightTheme =
         MutableLiveData(settings.appDayNightTheme(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM))
     val appDayNightMode: LiveData<Int> = _appDayNightTheme
@@ -95,6 +99,11 @@ class SettingsViewModel(private val settings: SettingsStorage) : ViewModel() {
     fun setSubtitleShowOrgUnitEnabled(enabled: Boolean) {
         _isSubtitleShowOrgUnitEnabled.value = enabled
         settings.subtitleShowOrgUnitEnabled = enabled
+    }
+
+    fun setShowSendMenuOnShakeEnabled(enabled: Boolean) {
+        _isShowSendMenuOnShakeEnabled.value = enabled
+        settings.showSendMenuOnShakeEnabled = enabled
     }
 
     fun setAppDayNightTheme(mode: Int) {

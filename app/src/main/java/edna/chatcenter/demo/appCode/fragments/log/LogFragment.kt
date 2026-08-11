@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SmoothScroller
 import edna.chatcenter.core.logger.ChatLogLevel
+import edna.chatcenter.core.logger.LogZipSender
+import edna.chatcenter.core.utils.FileProvider
 import edna.chatcenter.demo.R
 import edna.chatcenter.demo.appCode.adapters.logList.LogListAdapter
 import edna.chatcenter.demo.appCode.fragments.BaseAppFragment
@@ -76,6 +78,12 @@ class LogFragment : BaseAppFragment<FragmentLogBinding>(FragmentLogBinding::infl
 
     private fun initListeners() = getBinding()?.apply {
         logLevelSelector.setOnClickListener { showSelectLogLevelMenu(logLevelSelector) }
+        shareLog.setOnClickListener {
+            LogZipSender(
+                context = requireContext().applicationContext,
+                fileProvider = FileProvider(),
+            ).shareLogs()
+        }
         clearLog.setOnClickListener {
             adapter?.clear()
             viewModel.clearLog()

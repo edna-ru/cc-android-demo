@@ -70,6 +70,20 @@
                     tools:text="Verbose"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/shareLog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:textColor="@color/white_color"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginTop="@dimen/login_screen_top_margin_small"
+                    android:layout_marginBottom="@dimen/login_screen_top_margin_small"
+                    android:drawableEnd="@null"
+                    android:gravity="center_vertical"
+                    android:textAllCaps="true"
+                    android:text="@string/share_logs" />
+
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/clearLog"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -371,7 +371,8 @@ class EdnaChatCenterApplication : Application() {
                         LogViewModel.logsData.add(LogModel(time, logLevel, logText))
                     }
                 }
-            }
+            },
+            shouldShowSendMenu = settings.showSendMenuOnShakeEnabled,
         )
 
         val server = serverConfig ?: try {

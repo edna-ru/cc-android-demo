@@ -57,6 +57,10 @@ class SettingsStorage(context: Context) {
         get() = preferences.getBoolean(KEY_SUBTITLE_SHOW_ORG_UNIT, true)
         set(value) = preferences.edit { putBoolean(KEY_SUBTITLE_SHOW_ORG_UNIT, value) }
 
+    var showSendMenuOnShakeEnabled: Boolean
+        get() = preferences.getBoolean(KEY_SHOW_SEND_MENU_ON_SHAKE, true)
+        set(value) = preferences.edit { putBoolean(KEY_SHOW_SEND_MENU_ON_SHAKE, value) }
+
     var edgeToEdgeMode: EdgeToEdgeMode
         get() = EdgeToEdgeMode.fromStored(
             preferences.getInt(KEY_EDGE_TO_EDGE_MODE, EdgeToEdgeMode.DEFAULT.enableFromSdk)
@@ -85,6 +89,7 @@ class SettingsStorage(context: Context) {
         private const val KEY_WEB_SOCKET_RECONNECT = "sdk_websocket_reconnect_enabled"
         private const val KEY_SDK_INIT_DELAY = "sdk_init_delay_enabled"
         private const val KEY_SUBTITLE_SHOW_ORG_UNIT = "sdk_subtitle_show_org_unit_enabled"
+        private const val KEY_SHOW_SEND_MENU_ON_SHAKE = "sdk_show_send_menu_on_shake_enabled"
         private const val KEY_APP_DAY_NIGHT_THEME = "sdk_app_day_night_theme"
         private const val KEY_EDGE_TO_EDGE_MODE = "sdk_edge_to_edge_mode"
     }

@@ -8,6 +8,7 @@
     <string name="api_version">Версия API</string>
     <string name="log_level">Уровень лога: </string>
     <string name="clear">Очистить</string>
+    <string name="share_logs">Отправить</string>
     <string name="login">Войти</string>
     <string name="log">Лог</string>
     <string name="go_to_chat">Открыть чат в окне</string>
@@ -96,6 +97,7 @@
     <string name="prefill_chat_input">Предзаполнить поле ввода</string>
     <string name="sdk_init_delay">Задержка инициализации SDK (1 сек)</string>
     <string name="subtitle_show_org_unit">Показывать Organization Unit консультанта в подзаголовке</string>
+    <string name="show_send_menu_on_shake">Сбор логов по тряске девайса</string>
     <string name="edge_to_edge_settings">Режим edge-to-edge</string>
     <string name="edge_to_edge_legacy">Legacy - с Android 15 (API 35+)</string>
     <string name="edge_to_edge_from_11">С Android 11 (API 30+)</string>

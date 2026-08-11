@@ -81,6 +81,9 @@ class SettingsFragment : BaseAppFragment<FragmentSettingsBinding>(FragmentSettin
         viewModel.isSubtitleShowOrgUnitEnabled.observe(viewLifecycleOwner) { isEnabled ->
             subtitleShowOrgUnitSwitcher.isChecked = isEnabled
         }
+        viewModel.isShowSendMenuOnShakeEnabled.observe(viewLifecycleOwner) { isEnabled ->
+            showSendMenuOnShakeSwitcher.isChecked = isEnabled
+        }
 
         asyncInitSwitcher.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setAsyncInitEnabled(isChecked)
@@ -111,6 +114,9 @@ class SettingsFragment : BaseAppFragment<FragmentSettingsBinding>(FragmentSettin
         }
         subtitleShowOrgUnitSwitcher.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setSubtitleShowOrgUnitEnabled(isChecked)
+        }
+        showSendMenuOnShakeSwitcher.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setShowSendMenuOnShakeEnabled(isChecked)
         }
     }
 
