@@ -43,6 +43,16 @@ class ChatAppFragment : BaseAppFragment<FragmentChatBinding>(FragmentChatBinding
         ChatFragment.weakInstance.clear()
     }
 
+    /** Передаёт системный Back встроенному [ChatFragment], если открыта вкладка чата */
+    override fun navigateUp() {
+        if (getBinding()?.viewPager?.currentItem != TAB_INDEX_CHAT) return
+
+        childFragmentManager.fragments
+            .filterIsInstance<ChatFragment>()
+            .firstOrNull { fragment -> fragment.isAdded }
+            ?.onBackPressed()
+    }
+
     override fun needHandleDefaultInsets(): Boolean {
         return false
     }

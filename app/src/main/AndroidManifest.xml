@@ -46,6 +46,12 @@
         android:requestLegacyExternalStorage="true"
         tools:targetApi="31">
 
+        <!-- Свойство возвращает фиксацию portrait на экранах sw >= 600dp: при targetSdk 36
+             Android 16 игнорирует её без этого отказа. При targetSdk 37 отказ не действует -->
+        <property
+            android:name="android.window.PROPERTY_COMPAT_ALLOW_RESTRICTED_RESIZABILITY"
+            android:value="true"/>
+
         <activity android:name="edna.chatcenter.demo.appCode.activity.SplashScreenActivity"
             android:theme="@style/SplashTheme"
             android:exported="true"

@@ -1,16 +1,23 @@
 package edna.chatcenter.demo.appCode.models
 
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class UserInfo(
+    @SerializedName("userId")
     var userId: String? = null,
+    @SerializedName("userData")
     var userData: String? = null,
+    @SerializedName("signature")
     var signature: String? = null,
+    @SerializedName("authorizationHeader")
     var authorizationHeader: String? = null,
+    @SerializedName("xAuthSchemaHeader")
     var xAuthSchemaHeader: String? = null,
-    var isShowMenu: Boolean = false
+    @SerializedName("isShowMenu")
+    var isShowMenu: Boolean = false,
 ) : Parcelable {
 
     override fun toString() = "$userId," +

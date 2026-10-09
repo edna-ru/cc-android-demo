@@ -1,22 +1,35 @@
 package edna.chatcenter.demo.appCode.models
 
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ServerConfig(
+    @SerializedName("name")
     var name: String? = null,
+    @SerializedName("appMarker")
     var appMarker: String? = null,
+    @SerializedName("threadsGateProviderUid")
     var threadsGateProviderUid: String? = null,
+    @SerializedName("datastoreUrl")
     var datastoreUrl: String? = null,
+    @SerializedName("serverBaseUrl")
     var serverBaseUrl: String? = null,
+    @SerializedName("threadsGateUrl")
     var threadsGateUrl: String? = null,
+    @SerializedName("isFromApp")
     var isFromApp: Boolean = false,
+    @SerializedName("isShowMenu")
     var isShowMenu: Boolean = false,
+    @SerializedName("filesAndMediaMenuItemEnabled")
     var filesAndMediaMenuItemEnabled: Boolean = true,
+    @SerializedName("trustedSSLCertificates")
     var trustedSSLCertificates: List<Int>? = null,
+    @SerializedName("allowUntrustedSSLCertificate")
     var allowUntrustedSSLCertificate: Boolean = false,
-    var isInputEnabled: Boolean = true
+    @SerializedName("isInputEnabled")
+    var isInputEnabled: Boolean = true,
 ) : Parcelable {
 
     override fun toString() = "Server config:\n = $name, " +

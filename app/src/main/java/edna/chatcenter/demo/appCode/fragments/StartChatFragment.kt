@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -22,6 +23,7 @@ import edna.chatcenter.demo.appCode.business.ServersProvider
 import edna.chatcenter.demo.appCode.business.UiThemeProvider
 import edna.chatcenter.demo.databinding.FragmentStartChatBinding
 import edna.chatcenter.demo.integrationCode.EdnaChatCenterApplication
+import edna.chatcenter.ui.visual.activities.ChatActivity
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.java.KoinJavaComponent
@@ -86,6 +88,14 @@ class StartChatFragment :
                 val intent = Intent(it, ModalChatActivity::class.java)
                 startActivity(intent)
             } ?: Log.e("StartChatFragment", "context is null")
+        }
+        goToChat.setOnLongClickListener {
+            activity?.let {
+                val intent = Intent(it, ChatActivity::class.java)
+                startActivity(intent)
+                Toast.makeText(it, R.string.chat_opened_in_sdk_activity, Toast.LENGTH_SHORT).show()
+            } ?: Log.e("StartChatFragment", "context is null")
+            true
         }
         logout.setOnClickListener {
             chatCenterUI?.logout()

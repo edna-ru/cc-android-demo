@@ -103,6 +103,7 @@
     <string name="edge_to_edge_from_11">С Android 11 (API 30+)</string>
     <string name="edge_to_edge_all_versions">Все версии (API 21+)</string>
     <string name="edge_to_edge_restart_hint">Перезапустите приложение для применения режима edge-to-edge</string>
+    <string name="chat_opened_in_sdk_activity">Чат открыт в ChatActivity из SDK</string>
 
     <!-- Пример переопределения строки в SDK -->
     <!-- <string name="ecc_input_placeholder">Type your message</string> -->
