@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.ColorRes
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.messaging.FirebaseMessaging
 import com.microsoft.appcenter.AppCenter
@@ -37,8 +38,13 @@ import edna.chatcenter.ui.visual.uiStyle.settings.components.ChatComponents
 import edna.chatcenter.ui.visual.uiStyle.settings.flows.ChatFlows
 import edna.chatcenter.ui.visual.uiStyle.settings.configs.EdgeToEdgeConfig
 import edna.chatcenter.ui.visual.uiStyle.settings.configs.InsetsConfig
+import edna.chatcenter.ui.visual.uiStyle.settings.structures.SideSize
+import edna.chatcenter.ui.visual.uiStyle.settings.styles.ChatFontStyle
 import edna.chatcenter.ui.visual.uiStyle.settings.styles.ImagesChatStyle
 import edna.chatcenter.ui.visual.uiStyle.settings.styles.EccSystemBarStyle
+import edna.chatcenter.ui.visual.uiStyle.settings.styles.MessageFeedbackStyle
+import edna.chatcenter.ui.visual.uiStyle.settings.styles.TextButtonChatStyle
+import edna.chatcenter.ui.visual.uiStyle.settings.styles.messages.TextMessageStyle
 import edna.chatcenter.ui.visual.uiStyle.settings.theme.ChatColors
 import edna.chatcenter.ui.visual.uiStyle.settings.theme.ChatImages
 import kotlinx.coroutines.CoroutineScope
@@ -307,6 +313,13 @@ class EdnaChatCenterApplication : Application() {
             chatFlow.incomeMessages.openGraphTimeTextWhenError = chatFlow.incomeMessages.openGraphTimeText.copy(
                 textColor = R.color.white_color
             )
+            chatFlow.messageFeedbackStyle = createMessageFeedbackStyle(
+                accentColor = R.color.light_main,
+                textColor = R.color.black_color,
+                disabledColor = R.color.gray_color_b5,
+                placeholderColor = R.color.gray_color,
+                inputBackgroundColor = R.color.gray_color_f4,
+            )
         }
         chatLightTheme = ChatTheme(lightFlows) // создайте инстанс, переопределив точечно нужные элементы
 
@@ -345,8 +358,73 @@ class EdnaChatCenterApplication : Application() {
                     backgroundColor = R.color.dark_incoming_bubble
                 )
             )
+            chatFlow.messageFeedbackStyle = createMessageFeedbackStyle(
+                accentColor = R.color.dark_links,
+                textColor = R.color.dark_messages_text,
+                disabledColor = R.color.dark_time_text,
+                placeholderColor = R.color.dark_time_text,
+                inputBackgroundColor = R.color.dark_incoming_bubble,
+            )
         }
         chatDarkTheme = ChatTheme(darkFlows) // создайте инстанс, переопределив точечно нужные элементы
+    }
+
+    /**
+     * Пример стилизации оценки сообщения бота: блока в сообщении и `BottomSheet` комментария
+     *
+     * @param [accentColor] цвет линии над блоком, кнопок оценки, сохранённого комментария, текста
+     * «Добавить комментарий», рамки поля комментария в фокусе
+     * @param [textColor] цвет текста поля комментария
+     * @param [disabledColor] цвет недоступной кнопки оценки и рамки поля комментария
+     * @param [placeholderColor] цвет подсказки поля комментария
+     * @param [inputBackgroundColor] цвет фона поля комментария
+     */
+    private fun createMessageFeedbackStyle(
+        @ColorRes accentColor: Int,
+        @ColorRes textColor: Int,
+        @ColorRes disabledColor: Int,
+        @ColorRes placeholderColor: Int,
+        @ColorRes inputBackgroundColor: Int,
+    ): MessageFeedbackStyle {
+        val positiveIcon = edna.chatcenter.ui.R.drawable.ecc_message_feedback_positive
+        val negativeIcon = edna.chatcenter.ui.R.drawable.ecc_message_feedback_negative
+
+        return MessageFeedbackStyle(
+            margin = SideSize(top = R.dimen.margin_8),
+            padding = SideSize(top = R.dimen.margin_8),
+            separatorColor = accentColor,
+            positiveImage = ImagesChatStyle(imageResId = positiveIcon, tintColor = accentColor),
+            negativeImage = ImagesChatStyle(imageResId = negativeIcon, tintColor = accentColor),
+            positiveSelectedImage = ImagesChatStyle(
+                imageResId = edna.chatcenter.ui.R.drawable.ecc_message_feedback_positive_selected,
+                tintColor = accentColor,
+            ),
+            negativeSelectedImage = ImagesChatStyle(
+                imageResId = edna.chatcenter.ui.R.drawable.ecc_message_feedback_negative_selected,
+                tintColor = accentColor,
+            ),
+            positiveDisabledImage = ImagesChatStyle(imageResId = positiveIcon, tintColor = disabledColor),
+            negativeDisabledImage = ImagesChatStyle(imageResId = negativeIcon, tintColor = disabledColor),
+            commentInputColor = textColor,
+            commentInputBackgroundColor = inputBackgroundColor,
+            commentInputBorderColor = disabledColor,
+            commentInputFocusBorderColor = accentColor,
+            commentInputBorderRadius = R.dimen.margin_8,
+            commentInputFont = ChatFontStyle(fontSize = R.dimen.text_size_16),
+            commentInputPlaceholderColor = placeholderColor,
+            commentColor = accentColor,
+            commentFont = ChatFontStyle(fontSize = R.dimen.text_size_14),
+            errorColor = R.color.white_color,
+            errorBackgroundColor = R.color.log_error_color,
+            errorBorderRadius = R.dimen.margin_8,
+            errorFont = ChatFontStyle(fontSize = R.dimen.text_size_12),
+            addCommentButton = TextButtonChatStyle(
+                chatText = TextMessageStyle(
+                    textColor = accentColor,
+                    font = ChatFontStyle(fontSize = R.dimen.text_size_14),
+                ),
+            ),
+        )
     }
 
     private fun initializeChatCenterUI(

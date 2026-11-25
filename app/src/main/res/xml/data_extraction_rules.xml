@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <data-extraction-rules>
     <cloud-backup>
+        <exclude domain="sharedpref" path="edna.chatcenter.ui.internal.utils.EncryptedPrefStore.xml"/>
+        <exclude domain="sharedpref" path="edna.chatcenter.ui.eternal.utils.EncryptedPrefStore.xml"/>
+        <exclude domain="sharedpref" path="edna.chatcenter.ui.cloudMessagesPreferences.xml"/>
     </cloud-backup>
+    <device-transfer>
+        <exclude domain="sharedpref" path="edna.chatcenter.ui.internal.utils.EncryptedPrefStore.xml"/>
+        <exclude domain="sharedpref" path="edna.chatcenter.ui.eternal.utils.EncryptedPrefStore.xml"/>
+        <exclude domain="sharedpref" path="edna.chatcenter.ui.cloudMessagesPreferences.xml"/>
+    </device-transfer>
 </data-extraction-rules>

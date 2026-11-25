@@ -1,3 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <full-backup-content>
+    <exclude domain="sharedpref" path="edna.chatcenter.ui.internal.utils.EncryptedPrefStore.xml"/>
+    <exclude domain="sharedpref" path="edna.chatcenter.ui.eternal.utils.EncryptedPrefStore.xml"/>
+    <exclude domain="sharedpref" path="edna.chatcenter.ui.cloudMessagesPreferences.xml"/>
 </full-backup-content>
